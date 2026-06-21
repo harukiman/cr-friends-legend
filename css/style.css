@@ -191,7 +191,6 @@ img,canvas{max-width:100%;}
 
 /* シネマ（ストーリー/ムービー）— 全画面の強制イベントとして表示 */
 #cinema{position:fixed;inset:0;z-index:1000;background:#000;overflow:hidden;pointer-events:auto;}
-#cinema .cine-skip{font-size:13px;}
 #cinema .cine-bg{position:absolute;inset:0;transition:background .4s;}
 /* レターボックス */
 #cinema .cine-bars::before,#cinema .cine-bars::after{content:'';position:absolute;left:0;right:0;
@@ -218,7 +217,15 @@ img,canvas{max-width:100%;}
   border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:8px 12px;}
 #cinema .cine-name{font-size:13px;font-weight:800;}
 #cinema .cine-text{font-size:clamp(13px,3.6vw,16px);line-height:1.5;color:#fff;min-height:1.4em;}
-#cinema .cine-skip{position:absolute;top:13%;right:8px;z-index:5;font-size:11px;color:rgba(255,255,255,.6);}
+#cinema .cine-skip{position:absolute;top:13%;right:8px;z-index:5;display:flex;align-items:center;justify-content:center;
+  min-width:120px;min-height:44px;padding:0 14px;box-sizing:border-box;overflow:hidden;
+  border:1px solid rgba(255,255,255,.4);border-radius:22px;background:rgba(0,0,0,.42);
+  font-size:12px;font-weight:800;color:rgba(255,255,255,.85);cursor:pointer;user-select:none;-webkit-user-select:none;
+  touch-action:none;-webkit-tap-highlight-color:transparent;}
+#cinema .cine-skip-fill{position:absolute;left:0;top:0;bottom:0;width:0;z-index:0;
+  background:linear-gradient(90deg,#ff6a00,#ffd23b);opacity:.85;}
+#cinema .cine-skip-fill.on{width:100%;transition:width 1s linear;}
+#cinema .cine-skip-label{position:relative;z-index:1;pointer-events:none;}
 #cinema.cine-shake{animation:shakeHard .5s ease-out;}
 #cinema.cine-flash::after{content:'';position:absolute;inset:0;background:#fff;z-index:6;
   pointer-events:none;opacity:0;animation:boom .4s ease-out;}

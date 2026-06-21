@@ -207,13 +207,26 @@
   // ===== 壮大なストーリー（章立てサーガ）。初当りごとに1章進行。=====
   // 各章は［笑い→緊張→涙→決意→引き］＋幕間で、アニメ作品級の尺と情感に。
   const CHAPTERS = [
+    // 本編（純資産 5万→1億手前で順次解放）
     '第一章 旅立ち', '第二章 仲間との出会い', '第三章 ガキ大将の試練', '第四章 闇の前哨戦',
     '第五章 黄金の援軍', '第六章 豪腕の壁', '第七章 宇宙よりの刺客', '第八章 母の面影',
     '第九章 雨夜の誓い', '第十章 決戦前夜', '第十一章 闇の素顔', '最終章 闇のマスク',
+    // 裏ストーリー（FIRE=1億 以降、大富豪の物語。一定間隔で100兆まで解放）
+    '裏第一章 楽園の設計図', '裏第二章 仲間たちのその後', '裏第三章 新たな刺客', '裏第四章 世界が動く',
+    '裏第五章 富の孤独', '裏第六章 闇のマスク、再び', '裏第七章 経済の支配者', '裏最終章 世界の頂点',
+  ];
+  const MAIN_CH = 12;   // ここまでが本編。以降は裏ストーリー。
+  // 各章の解放しきい値（純資産）。突破するたび解放＝再生。
+  const CHAPTER_UNLOCK = [
+    50000, 100000, 300000, 700000, 1500000, 3000000, 6000000, 12000000, 25000000, 45000000, 65000000, 85000000,
+    5e8, 1e9, 5e9, 1e10, 5e10, 1e12, 1e13, 1e14,
   ];
   function chapterCount() { return CHAPTERS.length; }
   function chapterTitle(i) { return CHAPTERS[Math.min(i, CHAPTERS.length - 1)]; }
+  function unlockAsset(i) { return CHAPTER_UNLOCK[Math.min(i, CHAPTER_UNLOCK.length - 1)]; }
+  function chaptersUnlockedBy(assets) { let n = 0; for (const th of CHAPTER_UNLOCK) { if (assets >= th) n++; else break; } return n; }
   function chapter(i) {
+    if (i >= MAIN_CH) return uraChapter(i - MAIN_CH);   // 裏ストーリーへ
     const head = (sub, bg, col) => t(CHAPTERS[i], sub, { bg: bg || 'bg-legend', color: col || '#ff6ec7', dur: 1800, fx: 'flash', shock: true });
     switch (i) {
       case 0: return [ head('〜 すべての始まり 〜'),
@@ -693,6 +706,72 @@
     }
   }
 
+  // ===== 裏ストーリー（FIRE=1億 以降の大富豪サーガ。純資産 数億〜100兆を持つ前提）=====
+  // 資産規模に応じて世界が変わっていく後日譚。各章2-3分級へ拡張予定の土台。
+  function uraChapter(j) {
+    const T = CHAPTERS.slice(MAIN_CH);
+    const head = (sub, bg, col) => t(T[Math.min(j, T.length - 1)], sub, { bg: bg || 'bg-aurora', color: col || '#ffd23b', dur: 2000, fx: 'flash', shock: true });
+    switch (j) {
+      case 0: return [ head('〜 5億の使い道 〜', 'bg-aurora'),
+        nar('FIRE達成から半年。ハルの純資産は、5億を超えていた。', { bgImg: 'bg_skytree.jpg', dur: 2200 }),
+        sc('peace', '5億か…。5万円で震えてた男が、よく言うよな。…でも、金は目的じゃない。', { bgImg: 'bg_skytree.jpg', kb: true, dur: 2300 }),
+        sc('peace', '覚えてるか、みんな。誰も凍えさせない場所を作る——その約束、今日から動かす。', { bg: 'bg-aurora', form: 'awaken', fx: 'zoom', kb: true, dur: 2400 }),
+        sc('pepper', '試算完了。土地・建物・10年分の運営費。…5億で「楽園」の設計図が引ける。ピピッ。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2300 }),
+        sc('dog', '（ハルの夢が、ただの夢じゃなくなる日が来たワン…！）', { bg: 'bg-aurora', kb: true, dur: 2000 }),
+        t('楽園の、設計図。', '〜 物語は、まだ続く 〜', { bg: 'bg-legend', dur: 1900, color: '#ff6ec7' }) ];
+      case 1: return [ head('〜 それぞれの道 〜', 'bg-gold'),
+        nar('総資産10億。ハルの仲間たちにも、それぞれの春が訪れていた。', { bgImg: 'bg_park.svg', dur: 2100 }),
+        sc('gian', 'オレぁ子供向けの道場を開いてな。「奪う」んじゃなく「守る」強さを教えてんだ。', { bgImg: 'bg_park.svg', kb: true, dur: 2300 }),
+        sc('hero', '俺は財団を作った。夢を諦めかけた奴に、そっと手を貸す。…お前の背中を見て、決めたよ。', { bg: 'bg-gold', form: 'gold', kb: true, dur: 2400 }),
+        sc('peace', 'みんな…それぞれの場所で、誰かを照らしてるんだな。', { bgImg: 'bg_park.svg', kb: true, dur: 2000 }),
+        sc('dog', '（あの肉まん一個を分け合った夜が、こんな未来に繋がったワン）', { bg: 'bg-aurora', kb: true, dur: 2100 }),
+        t('夢は、伝播する。', '', { bg: 'bg-aurora', fx: 'flash', dur: 1800, color: '#ffd23b' }) ];
+      case 2: return [ head('〜 新たな刺客 〜', 'bg-fire', '#ff3b3b'),
+        nar('資産50億。富は、新たな敵を呼び寄せる。', { bgImg: 'bg_alley.svg', dur: 2000 }),
+        sc('general', 'フッ、成り上がりの慈善家気取りか。…私が買収で、貴様の楽園を更地にしてやろう。', { bgImg: 'bg_alley.svg', form: 'dark', fx: 'shake', kb: true, dur: 2400 }),
+        sc('peace', '金で人の居場所を潰す…か。あんたは、昔のオレが一番なりたくなかった姿だ。', { bg: 'bg-thunder', kb: true, dur: 2300 }),
+        sc('pepper', '相手の資産、推定80億。…数字では負けている。だが相棒、君はいつも数字を超える。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2200 }),
+        sc('peace', '受けて立つ。今度は玉じゃない、覚悟と覚悟の勝負だ！', { bg: 'bg-speed', fx: 'burst', shock: true, kb: true, dur: 2000 }),
+        t('富の、戦争。', '', { bg: 'bg-thunder', dur: 1800, color: '#ff3b3b' }) ];
+      case 3: return [ head('〜 世界が動く 〜', 'bg-legend'),
+        nar('資産100億。ハルの一挙手一投足が、市場を揺らすようになっていた。', { bgImg: 'bg_skytree.jpg', dur: 2200 }),
+        sc('pepper', '速報。君が楽園構想を発表しただけで、関連株が急騰。…世界が、君を見ている。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2300 }),
+        sc('peace', '100億…。数字が大きすぎて、もう実感も湧かないな。', { bgImg: 'bg_skytree.jpg', kb: true, dur: 2000 }),
+        sc('legend', '未来の君よ。力を持つほど、問われるのは「何のために使うか」だ。忘れるな。', { bg: 'bg-legend', form: 'ghost', kb: true, dur: 2400 }),
+        sc('peace', '分かってる。母さんの言葉も、モモとの約束も…全部、ここにある。', { bg: 'bg-aurora', form: 'awaken', kb: true, dur: 2200 }),
+        t('百億の、責任。', '', { bg: 'bg-legend', dur: 1800, color: '#ff6ec7' }) ];
+      case 4: return [ head('〜 富の孤独 〜', 'bg-space', '#9d86c4'),
+        nar('資産500億。ふと、ハルは足を止めた。あまりに、遠くまで来すぎた。', { bgImg: 'bg_skytree.jpg', dur: 2200 }),
+        sc('peace', '…なあモモ。オレ、いつのまにか、雲の上にいるみたいだ。…ちょっと、こわいよ。', { bgImg: 'bg_skytree.jpg', kb: true, dur: 2400 }),
+        sc('peace', '（闇のマスクが言ってた。「掴んだ栄光は、分かち合う者がなく、ただ冷たかった」って…）', { bg: 'bg-space', kb: true, dur: 2500 }),
+        sc('dog', '（ハル。下を見てごらんワン。モモも、ペッパーも、みんな、ちゃんと隣にいるワン）', { bg: 'bg-aurora', kb: true, dur: 2300 }),
+        sc('peace', '…そうだな。オレは、独りじゃない。あいつとは、違う。…ありがとう、モモ。', { bg: 'bg-aurora', form: 'awaken', kb: true, dur: 2200 }),
+        t('高みの、孤独と温もり。', '', { bg: 'bg-aurora', fx: 'flash', dur: 1800, color: '#ffd23b' }) ];
+      case 5: return [ head('〜 約束の再会 〜', 'bg-legend', '#ff6ec7'),
+        nar('資産1兆。ある日、楽園の片隅に、見覚えのある影が立っていた。', { bgImg: 'bg_shrine.svg', dur: 2200 }),
+        sc('black', '…久しいな、小僧。いや——ハル。見事に、約束を果たしたようだ。', { bgImg: 'bg_shrine.svg', kb: true, dur: 2300 }),
+        sc('peace', '闇のマスク…！　あんた、生きてたのか。…その顔、ずいぶん穏やかになったな。', { bgImg: 'bg_shrine.svg', kb: true, dur: 2200 }),
+        sc('black', 'お前が見せてくれた「温もり」が、忘れられなくてな。…私も、やり直すことにした。', { bgImg: 'bg_shrine.svg', kb: true, dur: 2400 }),
+        sc('peace', '……来いよ。この楽園、まだ席は空いてる。一緒に、誰かを照らそうぜ。', { bg: 'bg-aurora', form: 'awaken', fx: 'zoom', kb: true, dur: 2300 }),
+        t('宿敵は、戦友へ。', '', { bg: 'bg-aurora', fx: 'burst', shock: true, dur: 1900, color: '#ffd23b' }) ];
+      case 6: return [ head('〜 経済の支配者 〜', 'bg-gold'),
+        nar('資産10兆。もはやハルの名は、一国の経済を動かす規模になっていた。', { bgImg: 'bg_skytree.jpg', dur: 2200 }),
+        sc('pepper', '君の財団の支援先、累計100万人を突破。…「凍える人をなくす」が、現実になりつつある。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2400 }),
+        sc('peace', '10兆…。でも数えてるのは金額じゃない。救えた「笑顔の数」だ。', { bg: 'bg-gold', form: 'awaken', kb: true, dur: 2300 }),
+        sc('hero', '相棒、お前はもう、ただの大富豪じゃない。…時代そのものだ。', { bg: 'bg-gold', form: 'gold', kb: true, dur: 2100 }),
+        sc('dog', '（母さんが言ってた「一番の財産」…ハルは、世界中に増やしたワン）', { bg: 'bg-aurora', kb: true, dur: 2200 }),
+        t('十兆の、笑顔。', '', { bg: 'bg-legend', dur: 1800, color: '#ff6ec7' }) ];
+      default: return [ head('〜 世界の頂点 〜', 'bg-legend', '#ff6ec7'),
+        t('🌌 100兆円 🌌', '〜 ハルの物語、その果てへ 〜', { bg: 'bg-aurora', fx: 'flash', shock: true, dur: 2000, color: '#ff6ec7' }),
+        nar('純資産100兆。人類史上、誰も立ったことのない場所に、ひとりの男が立っていた。', { bgImg: 'bg_skytree.jpg', dur: 2400 }),
+        sc('legend', '100兆。もはや国家を超えた。…君は、歴史そのものだ。', { bg: 'bg-legend', form: 'ghost', fx: 'burst', kb: true, dur: 2300 }),
+        sc('peace', 'あの5万円のオレが…世界のてっぺんに。…でもさ、一番の宝物は、最初から手の中にあったんだ。', { bg: 'bg-aurora', form: 'awaken', fx: 'zoom', kb: true, dur: 2600 }),
+        sc('dog', '（モモ、誇らしいワン。…ずっと、君のそばにいられて、幸せだったワン）', { bg: 'bg-aurora', kb: true, dur: 2300 }),
+        sc('black', 'フッ…見事だ、ハル。お前こそ、真の伝説だ。', { bgImg: 'bg_shrine.svg', kb: true, dur: 2000 }),
+        t('THE TRUE LEGEND', '〜 笑って生きた男の、伝説 〜 完', { bg: 'bg-legend', fx: 'burst', shock: true, dur: 2700, color: '#ff6ec7' }) ];
+    }
+  }
+
   window.STORY = { CHARS: C, opening, battle, legend, awaken, victory, ending, yokoku, normalReach,
-                   chapter, chapterTitle, chapterCount };
+                   chapter, chapterTitle, chapterCount, chaptersUnlockedBy, unlockAsset };
 })();

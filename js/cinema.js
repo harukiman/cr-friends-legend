@@ -22,8 +22,10 @@
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const A = () => window.AUDIO;
 
-  let root, bg, fxlayer, bars, charEl, titleEl, box, nameEl, textEl, skipEl, inited = false;
-  let skipFlag = false, playing = false;
+  let root, bg, fxlayer, bars, charEl, titleEl, box, nameEl, textEl, skipEl, skipFill, inited = false;
+  let skipFlag = false, advanceFlag = false, playing = false;
+  const HOLD_MS = 1000;   // この時間ボタンを押し続けると全スキップ
+  let holdTimer = null;
 
   function init() {
     if (inited) return;
@@ -31,17 +33,33 @@
     bars = root.querySelector('.cine-bars'); charEl = root.querySelector('.cine-char');
     titleEl = root.querySelector('.cine-title'); box = root.querySelector('.cine-box');
     nameEl = root.querySelector('.cine-name'); textEl = root.querySelector('.cine-text');
-    skipEl = root.querySelector('.cine-skip');
-    // スキップは「動かさずにタップ」した時だけ（スクロールでは閉じない）
+    skipEl = root.querySelector('.cine-skip'); skipFill = root.querySelector('.cine-skip-fill');
+    // 画面タップ＝「テキスト送り」（動かさずに短くタップした時だけ。スクロールでは送らない）
     let ps = null;
     root.addEventListener('pointerdown', e => { ps = { x: e.clientX, y: e.clientY, t: Date.now() }; });
     root.addEventListener('pointerup', e => {
       if (!ps) return;
       const dx = Math.abs(e.clientX - ps.x), dy = Math.abs(e.clientY - ps.y), dt = Date.now() - ps.t;
       ps = null;
-      if (dx < 12 && dy < 12 && dt < 500) skipFlag = true;
+      if (dx < 12 && dy < 12 && dt < 500) advanceFlag = true;   // 送り（スキップではない）
     });
     root.addEventListener('pointercancel', () => { ps = null; });
+    // スキップボタン＝「長押し」でゲージが満タンになったら全スキップ
+    const startHold = e => {
+      e.stopPropagation();                    // 画面送りを発火させない
+      if (skipEl.style.display === 'none') return;
+      cancelHold();
+      if (skipFill) { void skipFill.offsetWidth; skipFill.classList.add('on'); }
+      holdTimer = setTimeout(() => { skipFlag = true; cancelHold(); }, HOLD_MS);
+    };
+    const cancelHold = () => {
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      if (skipFill) skipFill.classList.remove('on');
+    };
+    skipEl.addEventListener('pointerdown', startHold);
+    skipEl.addEventListener('pointerup', e => { e.stopPropagation(); cancelHold(); });
+    skipEl.addEventListener('pointerleave', cancelHold);
+    skipEl.addEventListener('pointercancel', cancelHold);
     inited = true;
   }
 
@@ -49,7 +67,7 @@
     textEl.style.color = color || '#fff';
     textEl.textContent = '';
     for (let i = 0; i < text.length; i++) {
-      if (skipFlag) { textEl.textContent = text; return; }
+      if (skipFlag || advanceFlag) { textEl.textContent = text; advanceFlag = false; return; }   // 送り＝即全文表示
       textEl.textContent += text[i];
       if (text[i] !== ' ' && text[i] !== '　' && A() && effSpeed() <= 3 && i % 2 === 0) A().SE.su(1);
       await sleep(30);
@@ -106,17 +124,19 @@
     } else { box.style.display = 'none'; }
     const dur = (s.dur || 1400) / effSpeed();   // 倍速時はシーン表示も短縮
     const t0 = Date.now();
-    while (!skipFlag && Date.now() - t0 < dur) await sleep(40);
+    while (!skipFlag && !advanceFlag && Date.now() - t0 < dur) await sleep(40);
+    advanceFlag = false;   // 送りでこのシーンの残り待機を打ち切って次へ
   }
 
   async function play(scenes, opts = {}) {
     init();
     if (!scenes || !scenes.length) return false;
     if (playing) return false;             // 多重再生は再生せず false
-    playing = true; skipFlag = false;
+    playing = true; skipFlag = false; advanceFlag = false;
     root.classList.add('show');
     bars.classList.add('in');
-    skipEl.style.display = opts.skippable === false ? 'none' : 'block';
+    if (skipFill) skipFill.classList.remove('on');
+    skipEl.style.display = opts.skippable === false ? 'none' : 'flex';
     if (opts.bgm && A()) A().startBgm(opts.bgm);
     try {
       await sleep(240);
@@ -129,7 +149,9 @@
       charEl.className = 'cine-char';
       bg.className = 'cine-bg'; fxlayer.className = 'cine-fxlayer';
       if (opts.bgm && A()) A().stopBgm();
-      skipFlag = false; playing = false;
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      if (skipFill) skipFill.classList.remove('on');
+      skipFlag = false; advanceFlag = false; playing = false;
     }
     return true;
   }

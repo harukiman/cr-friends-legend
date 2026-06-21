@@ -88,7 +88,7 @@
     milestonesHit: {},      // FIRE到達フラグ
     achievements: {},       // 解除済み実績
     baitEarned: false,      // バイト経験フラグ
-    storyChapter: 0,        // 見たストーリー章数（初当りごとに進行）
+    storyChapter: 0,        // 解放済みストーリー章数（純資産しきい値で進行）
     darkFails: 0,           // 闇バイト連続失敗
     darkBlacklist: false,   // 闇バイトブラックリスト入り
     darkBailFee: 0,         // 解除に必要な示談金
@@ -383,11 +383,7 @@
     S.holds = []; // 大当りで保留クリア（止め打ち）
     refresh();
     const spec = S.spec;
-    // 壮大なストーリー：初当りごとに1章進行（連チャン中は割り込まない）
-    if (S.renchan === 1 && S.storyChapter < window.STORY.chapterCount() && storyOn()) {
-      await window.CINEMA.play(window.STORY.chapter(S.storyChapter), { bgm: 'super', skippable: true });
-    }
-    if (S.renchan === 1 && S.storyChapter < window.STORY.chapterCount()) { S.storyChapter++; save(); refresh(); }
+    // ストーリーは「純資産しきい値を突破するたび解放＝再生」。出玉確定後にチェックする（doJackpot末尾）。
     if (window.AUDIO) { window.AUDIO.setBaseBgm(null); window.AUDIO.startBgm('round'); }
     // ラウンド振り分け（出玉に幅）。低Rを引いたら昇格演出のチャンス。
     let rounds = window.RNG.drawRounds(spec);
@@ -413,7 +409,8 @@
     updatePeak();
     save();
     checkAchievements();
-    await checkMilestones();   // FIRE到達チェック
+    await checkStoryProgress();   // 資産しきい値で章/裏ストーリー解放＝再生
+    await checkMilestones();      // FIRE到達エンディング
     refresh();
   }
 
@@ -426,6 +423,23 @@
 
   function storyOn() { return window.SETTINGS && window.SETTINGS.story && window.CINEMA && window.STORY; }
   function updatePeak() { const a = assets(); if (a > S.peakAssets) S.peakAssets = a; }
+
+  // ストーリー解放：純資産しきい値を突破するたび、その章を解放＝再生する。
+  // 本編(5万→1億手前)を順次、1億以降は裏ストーリー(100兆まで)。一度に複数突破したら最新章を再生し、
+  // 飛び越えた章も解放(物語ビューアで視聴可)。ムービーOFFなら再生せず解放だけ進める。
+  let _spBusy = false;
+  async function checkStoryProgress() {
+    if (_spBusy || !window.STORY) return; _spBusy = true;
+    try {
+      const target = window.STORY.chaptersUnlockedBy(assets());
+      if (S.storyChapter >= target) return;
+      if (storyOn()) {
+        const played = await window.CINEMA.play(window.STORY.chapter(target - 1), { bgm: 'super', skippable: true });
+        if (!played) return;   // 演出中等で流せなければ据え置き（次の機会に再生）
+      }
+      S.storyChapter = target; save(); refresh();
+    } finally { _spBusy = false; }
+  }
 
   // FIRE マイルストーン到達でエンディング/特殊ムービー
   // ※フラグは「再生に成功してから」立てる（演出中で再生できなければ次回再挑戦＝エンディング消失を防ぐ）
@@ -468,7 +482,7 @@
     if (window.AUDIO) window.AUDIO.SE.kakutei();
     updatePeak(); save(); refresh();
     checkAchievements();
-    checkMilestones();   // 換金で1億到達→エンディング
+    checkStoryProgress(); checkMilestones();   // 換金で資産到達→章解放/エンディング
   }
   function setRate(r) {
     if (locked() || !RATES.includes(r)) return;
@@ -481,7 +495,7 @@
   function addMoney(n, source) {
     S.money += Math.max(0, Math.floor(n));
     if (source === 'bait') { S.baitEarned = true; coolWanted(15); }  // 真面目に働くと手配度が下がる
-    updatePeak(); save(); refresh(); checkMilestones(); checkAchievements();
+    updatePeak(); save(); refresh(); checkStoryProgress(); checkMilestones(); checkAchievements();
   }
 
   // 実績解除チェック（再入ガード／早期実績は報酬で序盤を滑らかに）

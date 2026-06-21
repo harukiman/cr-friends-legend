@@ -215,10 +215,11 @@
   function openStory() {
     const st = window.GAME.snapshot(), m = $('#story-modal'), body = $('#story-body');
     body.innerHTML = '';
-    body.appendChild(el2('p', 'mg-intro', `初当りごとに物語が進みます（${Math.min(st.storyChapter, st.chapterCount)}/${st.chapterCount}章 解放）。`));
+    body.appendChild(el2('p', 'mg-intro', `純資産を増やすたびに物語が解放されます（${Math.min(st.storyChapter, st.chapterCount)}/${st.chapterCount}章 解放）。1億(FIRE)以降は裏ストーリー＝100兆まで。`));
     for (let i = 0; i < st.chapterCount; i++) {
       const unlocked = i < st.storyChapter;
-      const b = el2('button', 'mg-game-btn' + (unlocked ? '' : ''), `<b>${unlocked ? '📖' : '🔒'} ${window.STORY.chapterTitle(i)}</b><small>${unlocked ? 'タップで再生' : '初当りで解放'}</small>`);
+      const need = window.STORY.unlockAsset ? `資産¥${oku(window.STORY.unlockAsset(i))}で解放` : '資産で解放';
+      const b = el2('button', 'mg-game-btn' + (unlocked ? '' : ''), `<b>${unlocked ? '📖' : '🔒'} ${window.STORY.chapterTitle(i)}</b><small>${unlocked ? 'タップで再生' : need}</small>`);
       if (!unlocked) { b.disabled = true; b.style.opacity = .5; }
       else b.addEventListener('click', async () => { m.classList.add('hidden'); window.AUDIO.resume(); if (!window.CINEMA.isPlaying) await window.CINEMA.play(window.STORY.chapter(i), { bgm: 'super', skippable: true }); });
       body.appendChild(b);
