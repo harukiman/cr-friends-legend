@@ -8,7 +8,43 @@ html,body{margin:0;padding:0;background:radial-gradient(circle at 50% 0%,#1a0b2e
   color:#fff;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
   min-height:100%;overscroll-behavior:none;}
 
-#machine{max-width:480px;margin:0 auto;padding:8px 10px 24px;}
+/* データカウンター（台上部の表示機） */
+#data-counter{max-width:480px;margin:0 auto 8px;background:#05070d;border:2px solid #1a2740;
+  border-radius:10px;padding:8px;box-shadow:inset 0 0 16px rgba(0,0,0,.8);}
+.dc-cells{display:flex;gap:6px;}
+.dc-cell{flex:1;background:#0a0f1a;border:1px solid #16223a;border-radius:6px;padding:4px 2px;
+  text-align:center;font-variant-numeric:tabular-nums;}
+.dc-cell .dc-label{display:block;font-size:9px;color:#5d7299;letter-spacing:1px;}
+.dc-cell b{font-size:22px;color:#19e6a0;font-family:"DSEG7",ui-monospace,monospace;
+  text-shadow:0 0 8px rgba(25,230,160,.6);line-height:1.1;}
+.dc-cell .dc-unit{font-size:10px;color:#5d7299;margin-left:1px;}
+.dc-cell.hamari b{color:#ff5a36;text-shadow:0 0 8px rgba(255,90,54,.6);}
+#slump{display:block;width:100%;margin-top:6px;background:#070a12;border:1px solid #16223a;border-radius:6px;}
+
+/* キャビネット枠 */
+#cabinet{max-width:480px;margin:0 auto;padding:6px;border-radius:18px;
+  background:linear-gradient(160deg,#2a2030,#0e0a16 60%);
+  border:2px solid #3a2c4a;box-shadow:0 0 30px rgba(0,0,0,.6),inset 0 0 0 2px #120c1c;}
+
+/* 上部ランプバー */
+#lamp-bar{display:flex;gap:6px;justify-content:center;padding:6px 0;}
+#lamp-bar span{width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#ff7a18 60%,#7a2f00);
+  box-shadow:0 0 8px #ff7a18;animation:lampBlink 1.2s infinite;}
+#lamp-bar span:nth-child(2n){animation-delay:.2s;background:radial-gradient(circle at 35% 30%,#fff,#18a0ff 60%,#003a7a);box-shadow:0 0 8px #18a0ff;}
+#lamp-bar span:nth-child(3n){animation-delay:.4s;background:radial-gradient(circle at 35% 30%,#fff,#ff18c6 60%,#7a0050);box-shadow:0 0 8px #ff18c6;}
+@keyframes lampBlink{0%,100%{filter:brightness(.5);}50%{filter:brightness(1.4);}}
+#cabinet.fever #lamp-bar span{animation-duration:.45s;}
+
+#machine{max-width:480px;margin:0 auto;padding:6px 8px 16px;}
+
+/* 右打ち指示 */
+#migiuchi{position:relative;margin:6px auto 0;width:fit-content;padding:6px 22px;
+  font-size:20px;font-weight:900;color:#1a0b2e;border-radius:8px;
+  background:linear-gradient(90deg,#ffd23b,#ff8a00);box-shadow:0 0 16px #ffb300;
+  animation:migiBlink .6s steps(1) infinite;}
+#migiuchi .arrow{font-size:22px;}
+@keyframes migiBlink{50%{filter:brightness(1.5);transform:scale(1.04);}}
 
 /* ヘッダー */
 #topbar{text-align:center;margin-bottom:8px;}

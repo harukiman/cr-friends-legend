@@ -7,13 +7,27 @@
 
   function render(st) {
     $('#balls').textContent = st.balls;
-    $('#spins').textContent = st.spins;
+    const diffEl = $('#diff');
+    diffEl.textContent = (st.diff >= 0 ? '+' : '') + st.diff;
+    diffEl.style.color = st.diff >= 0 ? '#39d353' : '#ff6b6b';
     $('#renchan').textContent = st.renchan;
     const badge = $('#state-badge');
     badge.className = 'badge';
     if (st.state === 'kakuhen') { badge.textContent = `確変 残${st.stRemaining}`; badge.classList.add('kakuhen'); }
     else if (st.state === 'jitan') { badge.textContent = `時短 残${st.stRemaining}`; badge.classList.add('jitan'); }
     else badge.textContent = '通常';
+
+    // データカウンター
+    $('#dc-bighits').textContent = st.bigHits;
+    $('#dc-maxren').textContent = st.maxRenchan;
+    $('#dc-spins').textContent = st.spins;
+    $('#dc-since').textContent = st.sinceHit;
+
+    // 電サポ中(確変/時短)は右打ち＋FEVER枠
+    const denkou = st.state === 'kakuhen' || st.state === 'jitan';
+    $('#migiuchi').classList.toggle('hidden', !denkou);
+    const cab = $('#cabinet'); if (cab) cab.classList.toggle('fever', st.state === 'kakuhen');
+
     // 保留
     const slots = document.querySelectorAll('.hold-slot');
     slots.forEach((el, i) => {
@@ -21,6 +35,36 @@
       if (h) { el.classList.add('on'); el.style.background = h.color; el.style.color = h.color; }
       else { el.classList.remove('on'); el.style.background = ''; el.style.color = ''; }
     });
+
+    drawSlump(st.history);
+  }
+
+  // スランプグラフ（差玉の推移）
+  let slumpCtx = null;
+  function drawSlump(history) {
+    const cv = document.getElementById('slump');
+    if (!cv) return;
+    slumpCtx = slumpCtx || cv.getContext('2d');
+    const ctx = slumpCtx, W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    // 0ライン
+    const data = history && history.length ? history : [{ n: 0, diff: 0 }];
+    let max = 100, min = -100;
+    for (const p of data) { if (p.diff > max) max = p.diff; if (p.diff < min) min = p.diff; }
+    const pad = (max - min) * 0.1 || 50; max += pad; min -= pad;
+    const x = i => (data.length <= 1 ? 0 : (i / (data.length - 1)) * (W - 2)) + 1;
+    const y = v => H - ((v - min) / (max - min)) * (H - 2) - 1;
+    // グリッド0ライン
+    ctx.strokeStyle = '#24344f'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y(0)); ctx.lineTo(W, y(0)); ctx.stroke();
+    // ライン
+    ctx.strokeStyle = '#19e6a0'; ctx.lineWidth = 1.6; ctx.beginPath();
+    data.forEach((p, i) => { const px = x(i), py = y(p.diff); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+    ctx.stroke();
+    // 末端ドット
+    const last = data[data.length - 1];
+    ctx.fillStyle = last.diff >= 0 ? '#39d353' : '#ff6b6b';
+    ctx.beginPath(); ctx.arc(x(data.length - 1), y(last.diff), 2.5, 0, 7); ctx.fill();
   }
 
   function buildSpecSelect() {

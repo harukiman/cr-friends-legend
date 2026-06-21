@@ -7,17 +7,33 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- 実機データカウンター（台上部の表示機を模す） -->
+  <div id="data-counter">
+    <div class="dc-cells">
+      <div class="dc-cell"><span class="dc-label">大当り</span><b id="dc-bighits">0</b><span class="dc-unit">回</span></div>
+      <div class="dc-cell"><span class="dc-label">最高連</span><b id="dc-maxren">0</b><span class="dc-unit">連</span></div>
+      <div class="dc-cell"><span class="dc-label">回転数</span><b id="dc-spins">0</b></div>
+      <div class="dc-cell hamari"><span class="dc-label">ハマり</span><b id="dc-since">0</b></div>
+    </div>
+    <canvas id="slump" width="360" height="84" aria-label="スランプグラフ"></canvas>
+  </div>
+
+  <div id="cabinet">
+  <div id="lamp-bar"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <div id="machine">
     <!-- ヘッダー -->
     <header id="topbar">
       <div class="title">CR フレンズ伝説 <span class="sub">〜50年後の君へ〜</span></div>
       <div class="stat-line">
         <span>持玉 <b id="balls">0</b></span>
-        <span>回転 <b id="spins">0</b></span>
+        <span>差玉 <b id="diff">0</b></span>
         <span>連 <b id="renchan">0</b></span>
         <span id="state-badge" class="badge">通常</span>
       </div>
     </header>
+
+    <!-- 右打ち指示（電サポ中） -->
+    <div id="migiuchi" class="hidden">右打ち <span class="arrow">⤵</span></div>
 
     <!-- 液晶画面 -->
     <section id="screen">
@@ -80,7 +96,8 @@
       </div>
       <div id="reliability" class="info"></div>
     </div>
-  </div>
+  </div><!-- /#machine -->
+  </div><!-- /#cabinet -->
 
   <!-- 読み込み順序が依存関係 -->
   <script src="js/config.js"></script>

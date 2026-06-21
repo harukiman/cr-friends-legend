@@ -7,10 +7,11 @@
   const C = window.CONFIG;
   const MAX_HOLD = 4;
 
+  const START_BALLS = 500;
   const S = {
     specKey: C.DEFAULT_SPEC,
     spec: C.SPECS[C.DEFAULT_SPEC],
-    balls: 500,
+    balls: START_BALLS,
     spins: 0,
     renchan: 0,
     kakuhen: false,
@@ -20,6 +21,12 @@
     busy: false,        // スピン/大当り再生中
     firing: false,
     auto: false,
+    // 実機データカウンター用
+    bigHits: 0,         // 大当り回数
+    maxRenchan: 0,      // 最高連チャン
+    sinceHit: 0,        // 現在ハマり（前回大当りからの回転数）
+    startBalls: START_BALLS,
+    history: [],        // スランプグラフ用 {n, diff}
   };
 
   let onChange = () => {};
@@ -38,7 +45,14 @@
       spins: S.spins, renchan: S.renchan, holds: S.holds.map(h => h.holdDef),
       state: S.kakuhen ? 'kakuhen' : S.jitan ? 'jitan' : 'normal',
       stRemaining: S.stRemaining,
+      bigHits: S.bigHits, maxRenchan: S.maxRenchan, sinceHit: S.sinceHit,
+      diff: Math.floor(S.balls - S.startBalls), history: S.history,
     };
+  }
+
+  function recordHistory() {
+    S.history.push({ n: S.spins, diff: Math.floor(S.balls - S.startBalls) });
+    if (S.history.length > 400) S.history.shift();
   }
 
   function currentPHit() {
@@ -116,12 +130,14 @@
       while (S.holds.length > 0) {
         const roll = S.holds.shift();
         S.spins += 1;
+        S.sinceHit += 1;
         if (S.kakuhen || S.jitan) S.stRemaining = Math.max(0, S.stRemaining - 1);
         refresh();
 
         const win = await window.PRODUCTION.run(roll.prod, roll.finalSyms, roll.willKakuhen);
         if (win) await doJackpot(roll.willKakuhen);
         else if ((S.kakuhen || S.jitan) && S.stRemaining <= 0) endST();
+        recordHistory();
       }
     } catch (e) {
       console.error('consume error:', e);
@@ -137,6 +153,9 @@
 
   async function doJackpot(willKakuhen) {
     S.renchan += 1;
+    S.bigHits += 1;
+    S.sinceHit = 0;
+    if (S.renchan > S.maxRenchan) S.maxRenchan = S.renchan;
     S.holds = []; // 大当りで保留クリア（止め打ち）
     refresh();
     const spec = S.spec;
@@ -172,6 +191,9 @@
     if (!C.SPECS[key] || S.busy) return;
     S.specKey = key; S.spec = C.SPECS[key];
     S.kakuhen = S.jitan = false; S.stRemaining = 0; S.renchan = 0; S.holds = [];
+    // 台移動 = データリセット
+    S.spins = 0; S.bigHits = 0; S.maxRenchan = 0; S.sinceHit = 0;
+    S.startBalls = S.balls; S.history = [];
     if (window.AUDIO) window.AUDIO.stopAllBgm();
     refresh();
   }
