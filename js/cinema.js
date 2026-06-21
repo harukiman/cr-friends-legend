@@ -18,6 +18,7 @@
 
   let root, bg, bars, charEl, titleEl, box, nameEl, textEl, skipEl, inited = false;
   let skipFlag = false;
+  let playing = false;
 
   function init() {
     if (inited) return;
@@ -77,26 +78,34 @@
     while (!skipFlag && Date.now() - t0 < dur) await sleep(50);
   }
 
-  // メイン再生
+  // メイン再生（再入防止ロック＋例外時も必ず後始末）
   async function play(scenes, opts = {}) {
     init();
     if (!scenes || !scenes.length) return;
+    if (playing) return;                // 多重再生を防止
+    playing = true;
     skipFlag = false;
     root.classList.add('show');
     bars.classList.add('in');           // レターボックス展開
     skipEl.style.display = opts.skippable === false ? 'none' : 'block';
     if (opts.bgm && A()) A().startBgm(opts.bgm);
-    await sleep(260);
-    for (const s of scenes) {
-      if (skipFlag) break;
-      await playScene(s);
+    try {
+      await sleep(260);
+      for (const s of scenes) {
+        if (skipFlag) break;
+        await playScene(s);
+      }
+    } catch (e) {
+      console.error('cinema error:', e);
+    } finally {
+      bars.classList.remove('in');
+      root.classList.remove('show');
+      charEl.style.display = 'none'; titleEl.style.display = 'none'; box.style.display = 'none';
+      if (opts.bgm && A()) A().stopBgm();
+      skipFlag = false;
+      playing = false;
     }
-    bars.classList.remove('in');
-    root.classList.remove('show');
-    charEl.style.display = 'none'; titleEl.style.display = 'none'; box.style.display = 'none';
-    if (opts.bgm && A()) A().stopBgm();
-    skipFlag = false;
   }
 
-  window.CINEMA = { init, play };
+  window.CINEMA = { init, play, get isPlaying() { return playing; } };
 })();

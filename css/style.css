@@ -189,7 +189,7 @@ img,canvas{max-width:100%;}
 @keyframes confettiFall{from{transform:translateY(-10px) rotate(0);}to{transform:translateY(360px) rotate(720deg);}}
 
 /* シネマ（ストーリー/ムービー） */
-#cinema{z-index:13;background:#000;overflow:hidden;}
+#cinema{z-index:13;background:#000;overflow:hidden;pointer-events:auto;}
 #cinema .cine-bg{position:absolute;inset:0;transition:background .4s;}
 /* レターボックス */
 #cinema .cine-bars::before,#cinema .cine-bars::after{content:'';position:absolute;left:0;right:0;

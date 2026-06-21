@@ -157,6 +157,7 @@
     // 押している間だけ発射
     const start = async e => {
       e.preventDefault(); window.AUDIO.resume();
+      if (window.CINEMA && window.CINEMA.isPlaying) return;  // ムービー中は発射しない
       if (await maybeOpening()) return;        // 初回はOP再生のみ
       if (e.pointerId != null && fire.setPointerCapture) {
         try { fire.setPointerCapture(e.pointerId); } catch (_) {}
@@ -179,6 +180,7 @@
     const auto = $('#auto');
     auto.addEventListener('click', async () => {
       window.AUDIO.resume();
+      if (window.CINEMA && window.CINEMA.isPlaying) return;  // ムービー中は操作しない
       if (await maybeOpening()) return;
       const on = !auto.classList.contains('active');
       auto.classList.toggle('active', on);
