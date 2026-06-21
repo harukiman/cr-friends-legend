@@ -6,12 +6,12 @@
 (function () {
   const $ = s => document.querySelector(s);
   const A = () => window.AUDIO;
-  let modal, body, titleEl, timers = [];
+  let modal, body, titleEl, timers = [], forcedMode = false;
 
   function init() { modal = $('#minigame'); body = modal.querySelector('.mg-body'); titleEl = modal.querySelector('.mg-title'); }
   function clearTimers() { timers.forEach(t => { clearInterval(t); clearTimeout(t); }); timers = []; }
   function open() { init(); if (A()) A().resume(); modal.classList.remove('hidden'); menu(); }
-  function close() { clearTimers(); modal.classList.add('hidden'); body.innerHTML = ''; }
+  function close() { clearTimers(); forcedMode = false; modal.classList.add('hidden'); body.innerHTML = ''; }
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const after = (ms, fn) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
   // 連打系ゲームの直後、同じ位置に出る「もう一度/閉じる」を誤タップしないよう、
@@ -161,13 +161,16 @@
     reward = Math.max(0, Math.floor(reward));
     if (window.GAME) window.GAME.addMoney(reward, 'bait');
     if (A()) A().SE.kakutei();
+    const wasForced = forcedMode; forcedMode = false;
     body.innerHTML = '';
+    if (wasForced) body.appendChild(el('div', 'mg-result arrested', '🩸 取り立て完了。今回の利息は返済した（玉も軍資金も無事だ）。'));
     body.appendChild(el('div', 'mg-result', `${label}<br>${rank ? '<span class="mg-rank">' + rank + '</span><br>' : ''}<span class="mg-reward">バイト代 +¥${reward.toLocaleString()}</span>`));
     const row = el('div', 'mg-btnrow');
-    const again = el('button', 'mg-btn', 'もう一度'); again.addEventListener('click', menu);
-    const cl = el('button', 'mg-btn', '閉じる'); cl.addEventListener('click', close);
-    row.appendChild(again); row.appendChild(cl); body.appendChild(row);
-    guard([again, cl]);   // 連打の余韻で即誤タップしないよう一瞬ロック
+    let again = null;
+    if (!wasForced) { again = el('button', 'mg-btn', 'もう一度'); again.addEventListener('click', menu); row.appendChild(again); }
+    const cl = el('button', 'mg-btn', wasForced ? '足を洗う(閉じる)' : '閉じる'); cl.addEventListener('click', close);
+    row.appendChild(cl); body.appendChild(row);
+    guard(again ? [again, cl] : [cl]);   // 連打の余韻で即誤タップしないよう一瞬ロック
   }
   const rankOf = (score, max) => { const r = score / max; return r >= 1 ? '店長賞 SSS' : r >= .8 ? '評価 S' : r >= .6 ? '評価 A' : r >= .35 ? '評価 B' : '評価 C'; };
 
@@ -423,12 +426,24 @@
     const cl = el('button', 'mg-btn', '閉じる'); cl.addEventListener('click', close);
     nav.append(toBait, cl); body.appendChild(nav);
   }
-  // 闇金の取り立てで利息が払えない時：強制でバイトを発生させる
-  function forcedCollect(due) {
+  // 闇金の取り立て：ランダムなバイトを一度だけ強制する。完了でその回の利息はチャラ。
+  // 玉も軍資金も一切没収しない（バイトを一回こなす“だけ”がペナルティ）。
+  function forcedCollect() {
     if (!modal) init();
-    if (A()) { A().resume(); A().SE.cutin(); A().SE.lose(); }
+    if (A()) { A().resume(); A().SE.swarm(); }
     modal.classList.remove('hidden');
-    menu(`🩸 <b>闇金の取り立て！</b>　利息 ¥${due.toLocaleString()} が払えず…<br>バイトで稼いで返済しろ！（💳から返済できる）`);
+    clearTimers();
+    const money = window.GAME ? window.GAME.money : 0;
+    const pool = BAIT.filter(g => money >= g.req);          // 解放済みバイトから
+    const g = pool[Math.floor(Math.random() * pool.length)] || BAIT[0];
+    forcedMode = true;
+    titleEl.textContent = '🩸 闇金の取り立て';
+    body.innerHTML = '';
+    body.appendChild(el('div', 'mg-result arrested', `🩸 <b>闇金の取り立て！</b><br>今日の労働は——<b>${g.t}</b>（ランダム指名）。<br><small>一度こなせば、今回の利息はチャラ。玉も軍資金も没収はしない。</small>`));
+    const go = el('button', 'mg-btn wide', `▶ ${g.t} を始める`);
+    go.addEventListener('click', () => { if (A()) A().SE.button(); g.fn(g.pay); });
+    body.appendChild(go);
+    guard([go]);   // 直前の操作の余韻で誤発進しないよう一瞬ロック
   }
 
   window.MINIGAMES = { init, open, close, openCashing, forcedCollect };

@@ -161,7 +161,7 @@
     const storyOn2 = window.SETTINGS && window.SETTINGS.story && window.CINEMA && window.STORY;
     if (kind === 'normal') {
       msg('ノーマルリーチ…');
-      if (storyOn2) await window.CINEMA.play(window.STORY.normalReach(), { bgm: 'super' });
+      if (storyOn2) await window.CINEMA.play(window.STORY.normalReach(), { bgm: 'super', skippable: false });
       await sleep(700);
       return;
     }
@@ -177,7 +177,7 @@
       if (chance(0.4)) await holdFlash();                  // 保留変化
       await playTelop(rand(['チャンス！', '激アツ突入！', 'ここから一発！', '魅せ場だ！']), '#1380ff');
       if (chance(0.4)) { await stageSwitch(); await playTelop(rand(SERIFS.super), '#3af0ff'); }   // ステージ切替＋セリフ
-      if (storyOn) await window.CINEMA.play(window.STORY.battle('super'), { bgm: 'super' });
+      if (storyOn) await window.CINEMA.play(window.STORY.battle('super'), { bgm: 'super', skippable: false });
       await cutInImage(reachDef.img, reachDef.label, 1100, '#3af0ff');
       await sleep(600);
     } else if (kind === 'cutin') {
@@ -188,7 +188,7 @@
       if (chance(gold ? 0.7 : 0.4)) await holdFlash();     // 保留変化（金帯は高確率）
       await playTelop(gold ? rand(['激アツ確定級!!', '金保留 当確級!!', '勝ち確級!!']) : rand(['激熱!!', '超激アツ!!', 'これは…当たる!!', '燃えろ!!']), gold ? '#d4a800' : '#c00');
       if (chance(0.5)) await playTelop(rand(SERIFS.cutin), gold ? '#ffd23b' : '#ff3b3b');   // セリフ
-      if (storyOn) await window.CINEMA.play(window.STORY.battle(reachDef.id), { bgm: 'super' });
+      if (storyOn) await window.CINEMA.play(window.STORY.battle(reachDef.id), { bgm: 'super', skippable: false });
       if (chance(0.4)) await stageSwitch();                // ステージ切替
       shake();
       await cutInImage(reachDef.img, reachDef.label, 1300, gold ? '#ffd23b' : '#ff3b3b');
@@ -203,7 +203,7 @@
       await holdFlash();                                   // 全回転は保留も全昇格
       await playTelop(rand(['当 確 !?', '伝 説 !?', '奇 跡 !?']), '#b3008f');
       if (chance(0.6)) await playTelop(rand(SERIFS.allreel), '#ff6ec7');   // セリフ
-      if (storyOn) await window.CINEMA.play(window.STORY.legend(), { bgm: 'allreel' });
+      if (storyOn) await window.CINEMA.play(window.STORY.legend(), { bgm: 'allreel', skippable: false });
       await cutInImage(reachDef.img, rand(['伝説の全回転', '奇跡の全回転', '神話級 全回転']), 1800, '#ff6ec7');
       await sleep(800);
     }
@@ -373,7 +373,7 @@
       // 演出も倍速ONで早送りグラインド中のみ、非アツの予告を間引く（物語を堪能したい等倍時は通常通り）
       const grinding = (window.SETTINGS && window.SETTINGS.fastProduction) && (window.SPEED || 1) >= 5;
       const chance = hot ? 0.9 : (grinding ? 0 : 0.1);
-      if (Math.random() < chance) await window.CINEMA.play(window.STORY.yokoku(hot), {});
+      if (Math.random() < chance) await window.CINEMA.play(window.STORY.yokoku(hot), { skippable: false });
     }
 
     // 左→右 停止

@@ -23,7 +23,7 @@
   const A = () => window.AUDIO;
 
   let root, bg, fxlayer, bars, charEl, titleEl, box, nameEl, textEl, skipEl, skipFill, inited = false;
-  let skipFlag = false, advanceFlag = false, playing = false;
+  let skipFlag = false, advanceFlag = false, playing = false, allowSkip = true;
   const HOLD_MS = 1000;   // この時間ボタンを押し続けると全スキップ
   let holdTimer = null;
 
@@ -41,7 +41,7 @@
       if (!ps) return;
       const dx = Math.abs(e.clientX - ps.x), dy = Math.abs(e.clientY - ps.y), dt = Date.now() - ps.t;
       ps = null;
-      if (dx < 12 && dy < 12 && dt < 500) advanceFlag = true;   // 送り（スキップではない）
+      if (allowSkip && dx < 12 && dy < 12 && dt < 500) advanceFlag = true;   // 送り（OP/ストーリー/エンディングのみ）
     });
     root.addEventListener('pointercancel', () => { ps = null; });
     // スキップボタン＝「長押し」でゲージが満タンになったら全スキップ
@@ -136,7 +136,8 @@
     root.classList.add('show');
     bars.classList.add('in');
     if (skipFill) skipFill.classList.remove('on');
-    skipEl.style.display = opts.skippable === false ? 'none' : 'flex';
+    allowSkip = opts.skippable !== false;   // OP/ストーリー/エンディングのみ true（演出は false）
+    skipEl.style.display = allowSkip ? 'flex' : 'none';
     if (opts.bgm && A()) A().startBgm(opts.bgm);
     try {
       await sleep(240);

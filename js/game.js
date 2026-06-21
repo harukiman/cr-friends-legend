@@ -404,7 +404,7 @@
     else { S.kakuhen = false; S.jitan = true; }
     S.stRemaining = spec.stCount;
     // 覚醒RUSH/時短 突入ムービー
-    if (storyOn()) await window.CINEMA.play(window.STORY.awaken(willKakuhen), { skippable: true });
+    if (storyOn()) await window.CINEMA.play(window.STORY.awaken(willKakuhen), { skippable: false });   // 演出はスキップ非対応
     if (window.AUDIO) window.AUDIO.setBaseBgm(S.kakuhen ? 'kakuhen' : 'jitan'); // 確変/時短BGM
     updatePeak();
     save();
@@ -451,7 +451,7 @@
         const a = assets();
         if (a >= m.amt && !S.milestonesHit[m.key]) {
           if (storyOn()) {
-            const played = await window.CINEMA.play(window.STORY.ending(m), { bgm: 'allreel', skippable: false });
+            const played = await window.CINEMA.play(window.STORY.ending(m), { bgm: 'allreel', skippable: true });
             if (!played) continue;            // 再生できなければフラグを立てず次回再挑戦
           }
           S.milestonesHit[m.key] = true; save(); refresh();
@@ -600,18 +600,13 @@
       if (S.yamiCollectIn <= 0) S.yamiCollectIn = randCollect();
       S.yamiCollectIn -= 1;
       if (S.yamiCollectIn <= 0) {                       // ★取り立てイベント発生
-        const due = Math.ceil(S.yamiDebt * YAMI.rate);  // 暴利の利息＝今回支払うべき額
-        S.yamiDebt += due;
-        S.wanted = Math.min(100, S.wanted + YAMI.wantedCollect);
         S.yamiCollectIn = randCollect();                // 次回の取り立てまで（ランダム）
-        if (S.money >= due) {                            // 利息分を払える → 元本据え置き
-          S.money -= due; S.yamiDebt -= due; save();
-          if (window.PRODUCTION) window.PRODUCTION.msg(`🩸 闇金の取り立て！利息 ¥${due.toLocaleString()} を回収された（残債 ¥${S.yamiDebt.toLocaleString()}）`);
-        } else {                                         // 払えない → 利息は元本へ上乗せ＆強制バイト
-          save(); refresh();
-          if (window.MINIGAMES && window.MINIGAMES.forcedCollect) window.MINIGAMES.forcedCollect(due);
-          else if (window.PRODUCTION) window.PRODUCTION.msg(`🩸 闇金の取り立て！利息¥${due.toLocaleString()}が払えない…バイトで稼げ！`);
-        }
+        S.wanted = Math.min(100, S.wanted + YAMI.wantedCollect);
+        save(); refresh();
+        // 取り立て＝ランダムなバイトを一度だけ強制。完了でその回の利息はチャラ。
+        // 玉も軍資金も一切没収しない（身ぐるみ剥がし＝玉全消しを廃止）。残債(元本)は据え置き。
+        if (window.MINIGAMES && window.MINIGAMES.forcedCollect) window.MINIGAMES.forcedCollect();
+        else if (window.PRODUCTION) window.PRODUCTION.msg('🩸 闇金の取り立て！バイトを一度こなせば利息はチャラだ。');
       }
     }
   }
