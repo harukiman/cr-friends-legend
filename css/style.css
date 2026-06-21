@@ -1,0 +1,127 @@
+/* style.css — 盤面・液晶・演出のスタイル（スマホ対応） */
+:root{
+  --gold:#ffd23b; --red:#ff3b3b; --neon:#3af0ff; --bg:#0a0512;
+  --panel:#160c24; --line:#2a1840;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:radial-gradient(circle at 50% 0%,#1a0b2e 0%,var(--bg) 70%);
+  color:#fff;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  min-height:100%;overscroll-behavior:none;}
+
+#machine{max-width:480px;margin:0 auto;padding:8px 10px 24px;}
+
+/* ヘッダー */
+#topbar{text-align:center;margin-bottom:8px;}
+#topbar .title{font-size:22px;font-weight:900;letter-spacing:1px;
+  background:linear-gradient(90deg,#ffd23b,#ff6ec7,#3af0ff);-webkit-background-clip:text;
+  background-clip:text;color:transparent;text-shadow:0 0 18px rgba(255,110,199,.3);}
+#topbar .title .sub{display:block;font-size:11px;color:#bda7e6;-webkit-text-fill-color:#bda7e6;}
+.stat-line{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px;font-size:13px;color:#cbb8ec;}
+.stat-line b{color:#fff;font-size:15px;}
+.badge{padding:1px 10px;border-radius:10px;background:#333;font-weight:700;font-size:12px;}
+.badge.kakuhen{background:linear-gradient(90deg,#ff3b3b,#ffd23b);color:#1a0b2e;animation:pulse 1s infinite;}
+.badge.jitan{background:#2a7fff;}
+@keyframes pulse{50%{filter:brightness(1.4);}}
+
+/* 液晶 */
+#screen{position:relative;background:linear-gradient(160deg,#05010f,#150832);
+  border:3px solid var(--line);border-radius:14px;aspect-ratio:4/3;overflow:hidden;
+  box-shadow:0 0 28px rgba(58,240,255,.18),inset 0 0 40px rgba(0,0,0,.6);}
+#reels{position:absolute;inset:0;display:flex;gap:6px;padding:10px;align-items:center;justify-content:center;z-index:1;}
+.reel{flex:1;height:78%;background:#000;border-radius:10px;overflow:hidden;position:relative;
+  border:2px solid #2a1840;display:flex;align-items:center;justify-content:center;}
+.reel img{width:100%;height:100%;object-fit:cover;display:block;}
+.reel.spinning img{filter:blur(2px) brightness(.85);}
+.reel.tenpai{border-color:var(--red);box-shadow:0 0 18px var(--red);}
+.reel.stopped{animation:thunk .18s ease-out;}
+@keyframes thunk{0%{transform:translateY(-8%) scale(1.06);}100%{transform:none;}}
+
+/* オーバーレイ共通 */
+.fx{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:5;pointer-events:none;}
+.fx.show{display:flex;}
+
+/* フラッシュ */
+#fx-flash{background:#fff;opacity:0;z-index:4;}
+#fx-flash.boom{animation:boom .4s ease-out;}
+@keyframes boom{0%{opacity:.9;}100%{opacity:0;}}
+
+/* カットイン */
+#fx-cutin{flex-direction:column;background:rgba(0,0,0,.35);z-index:7;}
+#fx-cutin img{max-width:88%;max-height:74%;border:4px solid var(--gold);border-radius:8px;
+  box-shadow:0 0 40px var(--gold);}
+#fx-cutin.show img{animation:cutinPop .35s cubic-bezier(.2,1.5,.4,1);}
+@keyframes cutinPop{0%{transform:scale(.2) rotate(-12deg);opacity:0;}100%{transform:none;opacity:1;}}
+.cutin-label{margin-top:8px;font-size:20px;font-weight:900;color:var(--gold);text-shadow:0 0 12px #000;}
+
+/* SU予告 */
+#fx-su .su-text{font-size:42px;font-weight:900;color:#fff;text-shadow:0 0 16px var(--neon);
+  animation:suPop .25s ease-out;}
+@keyframes suPop{0%{transform:scale(2);opacity:0;}100%{transform:none;opacity:1;}}
+
+/* リーチ文字 */
+#fx-reach .reach-text{font-size:40px;font-weight:900;font-style:italic;
+  color:var(--red);text-shadow:0 0 18px #ff0,2px 2px 0 #000;animation:slideIn .4s ease-out;}
+@keyframes slideIn{0%{transform:translateX(-120%);opacity:0;}100%{transform:none;opacity:1;}}
+
+/* 結果 */
+#fx-result{z-index:8;}
+#fx-result .result-text{font-size:46px;font-weight:900;text-align:center;}
+#fx-result.win .result-text{color:var(--gold);text-shadow:0 0 24px var(--red);animation:winZoom .5s ease-out;}
+#fx-result.lose .result-text{color:#7a6b99;}
+@keyframes winZoom{0%{transform:scale(.3);opacity:0;}60%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;}}
+#screen.rainbow{animation:rainbowBorder 1s linear infinite;}
+@keyframes rainbowBorder{0%{box-shadow:0 0 40px #ff3b3b;}33%{box-shadow:0 0 40px #ffd23b;}
+  66%{box-shadow:0 0 40px #3af0ff;}100%{box-shadow:0 0 40px #ff6ec7;}}
+
+/* メッセージ */
+.msg{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:13px;
+  color:#d9c8f5;z-index:6;text-shadow:0 1px 2px #000;}
+
+/* 保留 */
+#holds{display:flex;gap:8px;justify-content:center;margin:8px 0;}
+.hold-slot{width:22px;height:22px;border-radius:50%;background:#1c1030;border:2px solid #2a1840;
+  transition:all .2s;}
+.hold-slot.on{box-shadow:0 0 10px currentColor;}
+
+/* 玉レーン */
+#lane{display:block;width:100%;max-width:320px;margin:0 auto;background:#0b0618;
+  border:2px solid var(--line);border-radius:10px;}
+
+/* 操作 */
+#controls{display:flex;gap:8px;margin:10px 0;}
+.big-btn{flex:2;padding:16px;font-size:18px;font-weight:900;border:none;border-radius:12px;
+  color:#1a0b2e;background:linear-gradient(180deg,#ffe27a,#ffb300);cursor:pointer;
+  box-shadow:0 4px 0 #a06800;}
+.big-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a06800;}
+.big-btn:disabled{filter:grayscale(.6) brightness(.8);cursor:default;}
+.toggle-btn{flex:1;padding:12px 10px;font-size:14px;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel);color:#fff;cursor:pointer;}
+.toggle-btn.active{background:linear-gradient(180deg,#3af0ff,#1380ff);color:#021;font-weight:800;}
+
+/* パネル */
+#panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:6px;}
+#panel .row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+#panel label{font-size:13px;color:#cbb8ec;display:flex;align-items:center;gap:6px;}
+#panel select,#panel input[type=range]{font-size:14px;}
+#panel select{background:#0e0820;color:#fff;border:1px solid var(--line);border-radius:8px;padding:6px;}
+.vol{flex:1;}
+.vol input{flex:1;width:100%;}
+#debug{margin-top:6px;border-top:1px dashed var(--line);padding-top:8px;}
+.debug-title{font-size:12px;color:#9d86c4;margin-bottom:6px;}
+#debug-buttons{display:flex;flex-wrap:wrap;gap:6px;}
+#debug-buttons button{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);
+  background:#0e0820;color:#fff;cursor:pointer;}
+.info{font-size:11px;color:#8c79b0;line-height:1.6;margin-top:8px;}
+.info b{color:#cbb8ec;}
+.hidden{display:none;}
+
+/* 画面シェイク */
+@keyframes shake{0%,100%{transform:none;}25%{transform:translate(-4px,2px);}
+  50%{transform:translate(4px,-2px);}75%{transform:translate(-2px,-3px);}}
+.shake{animation:shake .3s ease-in-out;}
+
+@media(max-width:380px){
+  #topbar .title{font-size:18px;}
+  #fx-result .result-text{font-size:36px;}
+  #fx-su .su-text{font-size:32px;}
+}

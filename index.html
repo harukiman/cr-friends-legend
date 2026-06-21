@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>激熱デジパチ - CR フレンズ伝説</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="machine">
+    <!-- ヘッダー -->
+    <header id="topbar">
+      <div class="title">CR フレンズ伝説 <span class="sub">〜50年後の君へ〜</span></div>
+      <div class="stat-line">
+        <span>持玉 <b id="balls">0</b></span>
+        <span>回転 <b id="spins">0</b></span>
+        <span>連 <b id="renchan">0</b></span>
+        <span id="state-badge" class="badge">通常</span>
+      </div>
+    </header>
+
+    <!-- 液晶画面 -->
+    <section id="screen">
+      <div id="reels">
+        <div class="reel" data-i="0"><img alt="reel0"></div>
+        <div class="reel" data-i="1"><img alt="reel1"></div>
+        <div class="reel" data-i="2"><img alt="reel2"></div>
+      </div>
+
+      <!-- 演出オーバーレイ群 -->
+      <div id="fx-flash" class="fx"></div>
+      <div id="fx-cutin" class="fx"><img alt="cutin"><div class="cutin-label"></div></div>
+      <div id="fx-su" class="fx"><div class="su-text"></div></div>
+      <div id="fx-reach" class="fx"><div class="reach-text"></div></div>
+      <div id="fx-result" class="fx"><div class="result-text"></div></div>
+      <div id="fx-message" class="msg"></div>
+    </section>
+
+    <!-- 保留 -->
+    <div id="holds">
+      <span class="hold-slot" data-i="0"></span>
+      <span class="hold-slot" data-i="1"></span>
+      <span class="hold-slot" data-i="2"></span>
+      <span class="hold-slot" data-i="3"></span>
+    </div>
+
+    <!-- 玉レーン（簡易演出）-->
+    <canvas id="lane" width="320" height="90"></canvas>
+
+    <!-- 操作 -->
+    <div id="controls">
+      <button id="fire" class="big-btn">発射 / 打ち出し</button>
+      <button id="auto" class="toggle-btn">オート OFF</button>
+    </div>
+
+    <!-- 設定・情報 -->
+    <div id="panel">
+      <div class="row">
+        <label>スペック
+          <select id="spec-select"></select>
+        </label>
+        <label class="vol">音量
+          <input id="volume" type="range" min="0" max="1" step="0.05" value="0.6">
+        </label>
+        <button id="mute" class="toggle-btn">🔊</button>
+      </div>
+      <div class="row">
+        <button id="toggle-debug" class="toggle-btn">デバッグ ▼</button>
+        <button id="reset" class="toggle-btn">玉追加 +500</button>
+      </div>
+      <div id="debug" class="hidden">
+        <div class="debug-title">強制発火（演出確認）</div>
+        <div id="debug-buttons"></div>
+      </div>
+      <div id="reliability" class="info"></div>
+    </div>
+  </div>
+
+  <!-- 読み込み順序が依存関係 -->
+  <script src="js/config.js"></script>
+  <script src="js/assets.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/rng.js"></script>
+  <script src="js/reels.js"></script>
+  <script src="js/production.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
