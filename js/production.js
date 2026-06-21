@@ -163,13 +163,14 @@
     hide(button);
   }
 
-  // 確定演出（虹＋確定テロップ＋確定音）
+  // 確定演出（虹＋確定テロップ＋確定音＋台全体シェイク）
   async function playKakutei() {
     screen.classList.add('rainbow');
     show(kakutei);
     if (A()) A().SE.kakutei();
-    flashBoom();
-    await sleep(1200);
+    flashBoom(); shakeHard();
+    await sleep(300); flashBoom();
+    await sleep(900);
     hide(kakutei);
   }
 
@@ -236,7 +237,7 @@
     cutin.querySelector('.cutin-label').textContent = label || '';
     cutin.querySelector('.cutin-label').style.color = color || '#ffd23b';
     if (A()) A().SE.cutin();
-    flashBoom();
+    flashBoom(); shakeHard();
     show(cutin);
     await sleep(dur);
     hide(cutin);
