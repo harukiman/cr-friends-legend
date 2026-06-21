@@ -3,7 +3,7 @@
  *
  * 設計方針:
  *   「数十分級のアニメ作品」を目指し、笑い(コメディ)と涙(ペーソス)を両立させた章立てサーガ。
- *   主人公ハルの感情の縦糸 = 「亡き母の言葉」と「拾い犬モモ」「200円」の対比。
+ *   主人公ハルの感情の縦糸 = 「亡き母の言葉」と「拾い犬モモ」「5万円」の対比。
  *   各章は［掴みの笑い → 緊張の高まり → 感情のピーク(泣き) → 決意 → 引き(クリフハンガー)］の
  *   起承転結＋幕間で構成し、再生時間と情感を稼ぐ。
  *   倍速の影響は cinema.js 側で完全除外（このムービーは常に等倍＝作品として鑑賞させる）。
@@ -47,11 +47,11 @@
   // ===== オープニング（プロローグ：数分級。男の人生・夢・仲間・宿敵を提示）=====
   function opening() {
     return [
-      { title: 'FORTUNE FIRE', text: '〜 200円から、世界の頂点へ 〜', bgImg: 'bg_cosmos.svg', color: '#ff6ec7', dur: 2200, fx: 'flash', shock: true },
+      { title: 'FORTUNE FIRE', text: '〜 5万円から、世界の頂点へ 〜', bgImg: 'bg_cosmos.svg', color: '#ff6ec7', dur: 2200, fx: 'flash', shock: true },
       nar('西暦20XX——　物価は上がり、給料は上がらない、そんな時代。', { bgImg: 'bg_city.svg', dur: 2000 }),
       nar('とある安アパートの一室に、うだつの上がらない一人の男がいた。', { bgImg: 'bg_city.svg', dur: 2000 }),
       sc('peace', 'はぁ……今月も家賃が払えるか、ギリギリだ。', { bgImg: 'bg_city.svg', kb: true, dur: 1900 }),
-      { title: '所持金　¥200', text: '——財布の中身は、たったの200円。', bgImg: 'bg_city.svg', color: '#ff6b6b', fx: 'shake', dur: 2100 },
+      { title: '所持金　¥50,000', text: '——財布の中身は、たったの5万円。', bgImg: 'bg_city.svg', color: '#ff6b6b', fx: 'shake', dur: 2100 },
       sc('peace', '自販機にコインを入れたら、ガコンって飲み込まれてさ。…今日もツイてない。', { bgImg: 'bg_city.svg', kb: true, dur: 2000 }),
       sc('dog', '（クゥ〜ン。…ハル、また晩ごはん抜くつもりだワン？）', { bgImg: 'bg_city.svg', kb: true, dur: 1900 }),
       sc('peace', 'モモ。お前にだけは、ひもじい思いはさせないよ。…ほら、オレの分も食え。', { bgImg: 'bg_city.svg', kb: true, dur: 2100 }),
@@ -61,12 +61,12 @@
       sc('peace', 'だからオレは、決めたんだ。', { bg: 'bg-aurora', fx: 'zoom', kb: true, dur: 1500 }),
       sc('peace', 'パチンコで一億円を稼いで、働かずに自由に生きる——FIREするんだ！', { bg: 'bg-aurora', fx: 'zoom', kb: true, dur: 2200 }),
       sc('peace', 'そして、かつてのオレやモモみたいに凍えてる奴が、誰もいない場所を作る。それがオレの夢だ！', { bg: 'bg-aurora', fx: 'burst', shock: true, kb: true, dur: 2400 }),
-      sc('pepper', '初めまして。データ分析ロボの相棒、ペッパーだ。…正直に言う。200円で挑むやつは、初めて見た。ピピッ。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2400 }),
+      sc('pepper', '初めまして。データ分析ロボの相棒、ペッパーだ。…正直に言う。5万円で挑むやつは、初めて見た。ピピッ。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2400 }),
       sc('pepper', '計算結果：成功確率0.0002%。普通なら、止める。…が、私の回路は、無謀な夢が嫌いじゃない。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2400 }),
       sc('dog', '（無謀…。でもモモは、この人の本気を知ってる。だから、最後まで信じるワン！）', { bg: 'bg-aurora', kb: true, dur: 2100 }),
-      sc('black', '……ククク。200円で一億だと？　身の程を知れ、矮小な夢追い人よ。', { bgImg: 'bg_hell.svg', form: 'dark', fx: 'shake', dur: 2200 }),
+      sc('black', '……ククク。5万円で一億だと？　身の程を知れ、矮小な夢追い人よ。', { bgImg: 'bg_hell.svg', form: 'dark', fx: 'shake', dur: 2200 }),
       sc('black', 'その甘い夢、この闇のマスクが喰らい尽くしてくれる。せいぜい足掻くがいい。', { bgImg: 'bg_hell.svg', form: 'dark', fx: 'shake', dur: 2200 }),
-      sc('legend', '——未来の君よ。聞こえるか。その200円から、運命を掴み取れ。物語は、いつだって一玉から始まる。', { bgImg: 'bg_throne.svg', form: 'ghost', kb: true, dur: 2600 }),
+      sc('legend', '——未来の君よ。聞こえるか。その5万円から、運命を掴み取れ。物語は、いつだって一玉から始まる。', { bgImg: 'bg_throne.svg', form: 'ghost', kb: true, dur: 2600 }),
       t('運命の一玉、放て。', '', { bg: 'bg-thunder', fx: 'burst', shock: true, dur: 1600, color: '#ffd23b' }),
     ];
   }
@@ -172,7 +172,7 @@
     // 1億 = FIRE（人生が変わる瞬間。感動の章）
     if (amt === 1e8) return [
       t('🎉 一億円 達成 🎉', '', { bg: 'bg-gold', fx: 'flash', shock: true, dur: 1600, color: '#ffd23b' }),
-      nar('——かつて財布に200円しかなかった男が、ついに。', { bg: 'bg-space', dur: 2000 }),
+      nar('——かつて財布に5万円しかなかった男が、ついに。', { bg: 'bg-space', dur: 2000 }),
       sc('peace', 'やった…やったぞ！　オレ、FIRE達成だ……！！', { bg: 'bg-aurora', form: 'awaken', fx: 'zoom', kb: true, dur: 1900 }),
       sc('peace', '（母さん。見てるかな。…ちゃんと、笑って生きてるよ。）', { bg: 'bg-aurora', kb: true, dur: 2200 }),
       sc('pepper', 'おめでとう相棒。…私の計算では、ありえない結末だった。君は、いつも計算を超える。ピピッ。', { bgImg: 'bg_cosmos.svg', kb: true, dur: 2300 }),
@@ -183,7 +183,7 @@
     if (amt >= 1e14) return [
       t('🌌 100兆円 🌌', '〜 世界の頂点 〜', { bg: 'bg-aurora', fx: 'flash', shock: true, dur: 1800, color: '#ff6ec7' }),
       sc('legend', '100兆。もはや国家をも超えた。君は、歴史そのものだ。', { bg: 'bg-legend', form: 'ghost', fx: 'burst', kb: true, dur: 2100 }),
-      sc('peace', 'あの200円のオレが…世界のてっぺんに。夢って、本当に叶うんだな。', { bg: 'bg-aurora', form: 'awaken', fx: 'zoom', kb: true, dur: 2200 }),
+      sc('peace', 'あの5万円のオレが…世界のてっぺんに。夢って、本当に叶うんだな。', { bg: 'bg-aurora', form: 'awaken', fx: 'zoom', kb: true, dur: 2200 }),
       sc('dog', '（モモ、誇らしいワン。…ずっと、君のそばにいられて、幸せだったワン）', { bg: 'bg-aurora', kb: true, dur: 2200 }),
       sc('black', 'フッ…見事だ。お前こそ、真の伝説だ。…あの日、夢を笑った私を、許せ。', { bg: 'bg-legend', form: 'dark', kb: true, dur: 2200 }),
       t('THE TRUE LEGEND', '〜 君の物語は永遠に語り継がれる 〜 完', { bg: 'bg-legend', fx: 'burst', shock: true, dur: 2700, color: '#ff6ec7' }) ];
@@ -220,7 +220,7 @@
         nar('朝。安アパートに、けたたましい目覚ましの音が響く。', { bgImg: 'bg_city.svg', dur: 1700 }),
         sc('peace', 'う〜ん…あと5分……って、二度寝してる場合じゃない！今日から本気だ！', { bgImg: 'bg_city.svg', fx: 'shake', kb: true, dur: 1900 }),
         sc('dog', '（ハル、その「本気」、昨日も一昨日も聞いたワン…）', { bgImg: 'bg_city.svg', kb: true, dur: 1700 }),
-        sc('peace', '聞こえてるぞモモ!?　…今日のは、本物の本気だ。財布が200円なんだ、もう後がない！', { bgImg: 'bg_city.svg', fx: 'zoom', kb: true, dur: 2000 }),
+        sc('peace', '聞こえてるぞモモ!?　…今日のは、本物の本気だ。財布が5万円なんだ、もう後がない！', { bgImg: 'bg_city.svg', fx: 'zoom', kb: true, dur: 2000 }),
         nar('うだつの上がらない毎日。だが、彼の胸には、消えない夢があった。', { bg: 'bg-space', dur: 1900 }),
         sc('peace', '一億円を稼いでFIREする！　そして、母さんとの約束を守るんだ！', { bg: 'bg-aurora', fx: 'zoom', kb: true, dur: 1900 }),
         sc('dog', '（…お母さん。ハルはね、今でも毎晩、あなたの写真に「おやすみ」を言うワン）', { bg: 'bg-aurora', kb: true, dur: 2200 }),
@@ -313,7 +313,7 @@
       // 第八章 母の面影 — 涙の山場。母の墓前で、夢の原点に立ち返る。
       case 7: return [ head('〜 母の面影 〜', 'bg-aurora', '#ff9ec0'),
         nar('連戦の疲れが、ふいに足を止めさせた。彼は、久しぶりに母の墓を訪れていた。', { bgImg: 'bg_grave.svg', dur: 2100 }),
-        sc('peace', '母さん、久しぶり。…痩せたって？　まあ、軍資金が200円スタートだったからね。', { bgImg: 'bg_grave.svg', kb: true, dur: 2200 }),
+        sc('peace', '母さん、久しぶり。…痩せたって？　まあ、軍資金が5万円スタートだったからね。', { bgImg: 'bg_grave.svg', kb: true, dur: 2200 }),
         sc('peace', '覚えてる？　オレが子供の頃、母さん、夜なべして内職してさ。それでも、いつも笑ってた。', { bgImg: 'bg_grave.svg', kb: true, dur: 2400 }),
         sc('dog', '（ハルの手、ちょっと震えてるワン。…我慢してるんだワン、ずっと）', { bgImg: 'bg_grave.svg', kb: true, dur: 2100 }),
         nar('——あの日。幼いハルは、病室の母に、こう尋ねた。', { bg: 'bg-aurora', dur: 1900 }),
@@ -336,12 +336,12 @@
         sc('dog', '（あの言葉が、モモの全部だワン。だからモモも誓ったワン。…この人の夢、絶対に守るって）', { bgImg: 'bg_rain.svg', kb: true, dur: 2500 }),
         sc('pepper', '相棒。傘を持ってきた。…非効率だと分かっている。それでも、濡れる君を放っておけなかった。', { bgImg: 'bg_rain.svg', kb: true, dur: 2400 }),
         sc('peace', 'ははっ…ロボのくせに、優しすぎだろ。…ありがとな。雨も、悪くないな。仲間と見れば。', { bgImg: 'bg_rain.svg', kb: true, dur: 2300 }),
-        sc('peace', '200円のあの日から、何ひとつ、ブレてない。誰も凍えさせない——その夢のために、勝つ！', { bgImg: 'bg_rain.svg', fx: 'burst', shock: true, kb: true, dur: 2200 }),
+        sc('peace', '5万円のあの日から、何ひとつ、ブレてない。誰も凍えさせない——その夢のために、勝つ！', { bgImg: 'bg_rain.svg', fx: 'burst', shock: true, kb: true, dur: 2200 }),
         t('やがて、雨は上がる。', '', { bg: 'bg-thunder', dur: 1700, color: '#7fa6d8' }) ];
 
       // 第十章 決戦前夜 — 旧第八章の名場面（夜景・全仲間の想い）
       case 9: return [ head('〜 決戦前夜 〜', 'bg-legend'),
-        { char: C.peace.img, name: C.peace.name, color: C.peace.color, text: 'こんなに遠くまで来たんだな…。200円のオレが、こんな夜景を見てる。全部、みんなのおかげだ。', bgImg: 'bg_skytree.jpg', kb: true, dur: 2400 },
+        { char: C.peace.img, name: C.peace.name, color: C.peace.color, text: 'こんなに遠くまで来たんだな…。5万円のオレが、こんな夜景を見てる。全部、みんなのおかげだ。', bgImg: 'bg_skytree.jpg', kb: true, dur: 2400 },
         sc('dog', '（明日、すべてが終わるんだね。…モモ、白状するワン。ずっと、言えなかったこと）', { bg: 'bg-legend', kb: true, dur: 2100 }),
         sc('dog', '（あの雨の日、ハルがパンをくれなかったら、モモは生きてなかったワン。…だから、命の恩人なんだワン）', { bg: 'bg-legend', kb: true, dur: 2500 }),
         sc('peace', 'バカ。逆だよモモ。お前がいたから、オレは独りじゃなかった。…救われたのは、オレの方だ。', { bg: 'bg-legend', kb: true, dur: 2400 }),
@@ -358,7 +358,7 @@
         nar('決戦の地へ向かう途中、ハルは古びた神社で、ひとり佇む闇のマスクと出会う。', { bgImg: 'bg_shrine.svg', dur: 2100 }),
         sc('black', '…ここは、私が最後に願掛けをした場所だ。あの日も、私は本気で夢を信じていた。', { bgImg: 'bg_shrine.svg', form: 'dark', kb: true, dur: 2300 }),
         sc('peace', 'あんたにも、こんな場所が…。…何があったんだ。なんで、夢を憎むようになった。', { bgImg: 'bg_shrine.svg', kb: true, dur: 2200 }),
-        nar('かつて彼もまた、200円から頂点を目指した、ひとりの若者だった。', { bgImg: 'bg_shrine.svg', dur: 2000 }),
+        nar('かつて彼もまた、5万円から頂点を目指した、ひとりの若者だった。', { bgImg: 'bg_shrine.svg', dur: 2000 }),
         sc('black', '私は、あと一歩で頂に届いた。だが、独りだった。…誰も、隣にいなかった。', { bgImg: 'bg_shrine.svg', form: 'dark', kb: true, dur: 2400 }),
         sc('black', '掴んだ栄光は、分かち合う者がなく、ただ冷たかった。…だから私は、夢そのものを呪った。', { bgImg: 'bg_shrine.svg', form: 'dark', kb: true, dur: 2500 }),
         sc('peace', '……そうか。あんたは、勝ったのに、ひとりぼっちだったのか。', { bgImg: 'bg_shrine.svg', kb: true, dur: 2100 }),
