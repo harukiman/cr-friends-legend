@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="hvsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe6b8"/><stop offset="55%" stop-color="#ffd28a"/><stop offset="100%" stop-color="#f7a45c"/></linearGradient>
+    <linearGradient id="hvg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6fbf73"/><stop offset="100%" stop-color="#3c7a48"/></linearGradient>
+    <radialGradient id="hvsun" cx="50%" cy="40%" r="40%"><stop offset="0%" stop-color="#fff7e0" stop-opacity=".95"/><stop offset="100%" stop-color="#fff7e0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#hvsky)"/>
+  <circle cx="400" cy="200" r="220" fill="url(#hvsun)"/>
+  <circle cx="400" cy="190" r="60" fill="#fff3cf"/>
+  <path d="M0 430 Q200 400 400 430 T800 430 L800 600 L0 600 Z" fill="url(#hvg)"/>
+  <g fill="#2f5e39">
+    <path d="M150 430 L175 360 L200 430 Z"/><rect x="170" y="430" width="10" height="20"/>
+    <path d="M600 440 L630 350 L660 440 Z"/><rect x="622" y="440" width="14" height="26"/>
+    <path d="M330 445 L360 380 L390 445 Z"/><rect x="352" y="445" width="12" height="22"/>
+  </g>
+  <g fill="#e8dcc0" stroke="#b89b6a" stroke-width="2">
+    <rect x="280" y="400" width="240" height="70" rx="6"/>
+    <path d="M270 400 L400 350 L530 400 Z" fill="#d6906b"/>
+  </g>
+  <rect x="380" y="430" width="40" height="40" fill="#8a6a44"/>
+  <g fill="#fff" opacity=".85"><circle cx="120" cy="120" r="22"/><circle cx="150" cy="120" r="28"/><circle cx="185" cy="122" r="22"/></g>
+  <g fill="#fff" opacity=".7"><circle cx="640" cy="150" r="20"/><circle cx="675" cy="150" r="26"/><circle cx="705" cy="152" r="18"/></g>
+</svg>

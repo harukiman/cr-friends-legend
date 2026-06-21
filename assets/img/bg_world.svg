@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="wspace" cx="50%" cy="50%" r="75%"><stop offset="0%" stop-color="#0a1430"/><stop offset="100%" stop-color="#02040c"/></radialGradient>
+    <radialGradient id="wearth" cx="40%" cy="38%" r="65%"><stop offset="0%" stop-color="#3aa0ff"/><stop offset="70%" stop-color="#0f4f9e"/><stop offset="100%" stop-color="#04244e"/></radialGradient>
+    <radialGradient id="watm" cx="50%" cy="50%" r="50%"><stop offset="78%" stop-color="#7fd0ff" stop-opacity="0"/><stop offset="100%" stop-color="#7fd0ff" stop-opacity=".55"/></radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#wspace)"/>
+  <g fill="#fff"><circle cx="80" cy="80" r="1.4"/><circle cx="200" cy="150" r="1"/><circle cx="700" cy="110" r="1.5"/><circle cx="620" cy="60" r="1.1"/><circle cx="120" cy="480" r="1.3"/><circle cx="740" cy="500" r="1.2"/><circle cx="60" cy="300" r="1"/></g>
+  <circle cx="400" cy="320" r="200" fill="url(#wearth)"/>
+  <g fill="#4fae5a" opacity=".85"><path d="M300 240 Q360 220 400 260 Q420 300 360 320 Q310 300 300 240 Z"/><path d="M420 300 Q480 290 520 330 Q500 380 440 380 Q410 340 420 300 Z"/><path d="M340 360 Q380 350 400 390 Q380 420 350 410 Q330 390 340 360 Z"/></g>
+  <circle cx="400" cy="320" r="206" fill="url(#watm)"/>
+  <g stroke="#ffd98a" stroke-width="1.2" fill="none" opacity=".7"><path d="M250 200 Q400 140 560 220"/><path d="M260 440 Q400 500 560 430"/></g>
+  <g fill="#ffe9a8"><circle cx="250" cy="200" r="3"/><circle cx="560" cy="220" r="3"/><circle cx="260" cy="440" r="3"/><circle cx="560" cy="430" r="3"/></g>
+</svg>

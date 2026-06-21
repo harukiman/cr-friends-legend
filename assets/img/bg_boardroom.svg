@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="brw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2436"/><stop offset="100%" stop-color="#0c1220"/></linearGradient>
+    <linearGradient id="brwin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a3a5a"/><stop offset="100%" stop-color="#101a2e"/></linearGradient>
+    <linearGradient id="brtbl" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3a2c20"/><stop offset="100%" stop-color="#1c140d"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#brw)"/>
+  <rect x="40" y="40" width="720" height="320" fill="url(#brwin)"/>
+  <g stroke="#0c1220" stroke-width="6"><line x1="280" y1="40" x2="280" y2="360"/><line x1="520" y1="40" x2="520" y2="360"/><line x1="40" y1="200" x2="760" y2="200"/></g>
+  <g fill="#ffd98a" opacity=".5"><rect x="120" y="120" width="6" height="40"/><rect x="200" y="90" width="5" height="60"/><rect x="360" y="140" width="6" height="50"/><rect x="430" y="100" width="5" height="70"/><rect x="600" y="130" width="6" height="55"/><rect x="680" y="100" width="5" height="65"/></g>
+  <path d="M120 560 Q400 440 680 560 L760 600 L40 600 Z" fill="url(#brtbl)"/>
+  <ellipse cx="400" cy="470" rx="260" ry="30" fill="#4a382a"/>
+  <g fill="#c9a45a" opacity=".8"><circle cx="320" cy="465" r="6"/><circle cx="400" cy="460" r="6"/><circle cx="480" cy="465" r="6"/></g>
+</svg>
