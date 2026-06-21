@@ -156,5 +156,49 @@
     ];
   }
 
-  window.STORY = { CHARS: C, opening, battle, legend, awaken, victory, ending, yokoku, normalReach };
+  // ===== 壮大なストーリー（章立てサーガ）。初当りごとに1章進行 =====
+  const CHAPTERS = [
+    '第一章 旅立ち', '第二章 仲間との出会い', '第三章 ガキ大将の試練', '第四章 闇の前哨戦',
+    '第五章 黄金の援軍', '第六章 豪腕の壁', '第七章 宇宙よりの刺客', '第八章 決戦前夜', '最終章 闇のマスク',
+  ];
+  function chapterCount() { return CHAPTERS.length; }
+  function chapterTitle(i) { return CHAPTERS[Math.min(i, CHAPTERS.length - 1)]; }
+  function chapter(i) {
+    const head = (sub, bg, col) => t(CHAPTERS[i], sub, { bg: bg || 'bg-legend', color: col || '#ff6ec7', dur: 1700, fx: 'flash' });
+    switch (i) {
+      case 0: return [ head('〜 すべての始まり 〜'),
+        sc('peace', '一億稼いでFIREする。オレの伝説は今日から始まるんだ！', { bg: 'bg-aurora', fx: 'zoom', kb: true }),
+        sc('doya', 'フン、新入りか。ドヤ皇帝が世の厳しさを教えてやろう。', { bg: 'bg-fire', fx: 'zoom', kb: true, dur: 1700 }) ];
+      case 1: return [ head('〜 心強き仲間たち 〜', 'bg-space'),
+        sc('pepper', 'データ分析は任せろ、相棒。勝率を上げてみせる、ピピッ。', { bg: 'bg-space', kb: true }),
+        sc('dog', '（モモも一緒だワン！　幸運を呼ぶよ）', { bg: 'bg-aurora', kb: true, dur: 1400 }),
+        sc('peace', 'みんなとなら、どこまでも行ける気がする！', { bg: 'bg-aurora', fx: 'zoom', kb: true }) ];
+      case 2: return [ head('〜 腕力の試練 〜', 'bg-fire', '#ff8a00'),
+        sc('gian', 'おっせえなあ！　オレ様の拳、受けてみろ！', { bg: 'bg-fire', fx: 'zoom', kb: true }),
+        sc('peace', '力だけじゃない…粘りで勝つ！', { bg: 'bg-speed', fx: 'speed', dur: 1400 }) ];
+      case 3: return [ head('〜 忍び寄る闇 〜', 'bg-thunder', '#ff3b3b'),
+        sc('general', '我が軍門に下れ。逆らえば容赦はせん。', { bg: 'bg-fire', form: 'dark', fx: 'shake', kb: true }),
+        sc('peace', 'こいつ…ただ者じゃない。でも引けない！', { bg: 'bg-thunder', fx: 'shake', dur: 1500 }) ];
+      case 4: return [ head('〜 黄金の援軍 〜', 'bg-gold', '#ffd23b'),
+        sc('peace', 'もう限界かも…！', { bg: 'bg-space', fx: 'shake', dur: 1200 }),
+        sc('hero', '諦めるな！正義のイエローヒーロー、覚醒だ！', { bg: 'bg-gold', form: 'gold', fx: 'zoom', kb: true, se: 'kakutei' }),
+        t('黄金の力、解放！', '', { bg: 'bg-aurora', fx: 'burst', shock: true, dur: 1400, color: '#ffd23b' }) ];
+      case 5: return [ head('〜 立ちはだかる豪腕 〜', 'bg-fire', '#b06a2a'),
+        sc('gorilla', 'ウホ……この豪腕、砕けるものなら砕いてみろ。', { bg: 'bg-fire', form: 'dark', fx: 'shake', kb: true }),
+        sc('peace', '仲間がいる。だからオレは折れない！', { bg: 'bg-speed', fx: 'speed', dur: 1500 }) ];
+      case 6: return [ head('〜 宇宙よりの刺客 〜', 'bg-space', '#9d86c4'),
+        sc('alien', 'ワレワレハ、キミノFIREヲ、ジャマシニキタ……', { bg: 'bg-space', fx: 'zoom', kb: true }),
+        sc('peace', '宇宙人まで!?　もう何でもアリだな…！', { bg: 'bg-aurora', fx: 'zoom', dur: 1400 }) ];
+      case 7: return [ head('〜 決戦前夜 〜', 'bg-legend'),
+        { char: C.peace.img, name: C.peace.name, color: C.peace.color, text: 'ここまで来た。あと少しで、夢に手が届く。', bgImg: 'bg_skytree.jpg', kb: true, dur: 1800 },
+        sc('legend', '最後の試練だ。己の伝説を、信じよ。', { bg: 'bg-legend', form: 'ghost', kb: true, dur: 1700 }) ];
+      default: return [ head('〜 闇のマスク、降臨 〜', 'bg-thunder', '#ff3b3b'),
+        sc('black', 'ここまで来たか…だが、伝説への扉は私が閉ざす！', { bg: 'bg-fire', form: 'dark', fx: 'burst', se: 'cutin', kb: true, dur: 1700 }),
+        sc('peace', '闇のマスク…！　お前を超えて、オレは伝説になる！！', { bg: 'bg-thunder', fx: 'flash', shock: true, kb: true, dur: 1700 }),
+        t('運命の最終決戦——！', '', { bg: 'bg-aurora', fx: 'burst', shock: true, dur: 1600, color: '#ffd23b' }) ];
+    }
+  }
+
+  window.STORY = { CHARS: C, opening, battle, legend, awaken, victory, ending, yokoku, normalReach,
+                   chapter, chapterTitle, chapterCount };
 })();

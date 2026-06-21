@@ -86,8 +86,8 @@ img,canvas{max-width:100%;}
   text-shadow:0 0 16px currentColor,0 3px 4px #000;pointer-events:none;}
 .reel-num.odd{color:#ffd23b;}   /* 奇数=確変図柄 */
 .reel-num.even{color:#eaf2ff;}  /* 偶数=通常図柄 */
-.reel.spinning img{filter:blur(2px) brightness(.8);}
-.reel.spinning .reel-num{filter:blur(4px);opacity:.5;}
+.reel.spinning img{filter:blur(2px) brightness(.92);}
+.reel.spinning .reel-num{filter:blur(4px);opacity:.6;}
 .reel.tenpai{border-color:var(--red);box-shadow:0 0 18px var(--red);transform:scale(1.06);}
 .reel.stopped{animation:thunk .18s ease-out;}
 @keyframes thunk{0%{transform:translateY(-8%) scale(1.06);}100%{transform:none;}}
@@ -242,7 +242,7 @@ img,canvas{max-width:100%;}
 .cine-fxlayer.fx-burst{background:radial-gradient(circle at 50% 50%,rgba(255,240,180,.7),transparent 60%);animation:burst .5s ease-out;}
 @keyframes burst{0%{transform:scale(.2);opacity:1;}100%{transform:scale(2);opacity:0;}}
 /* 立ち絵の別形態フィルター（画像数を増やす） */
-.cine-char.form-dark{filter:brightness(.25) contrast(1.4) drop-shadow(0 0 12px #ff0000);}
+.cine-char.form-dark{filter:brightness(.62) contrast(1.25) saturate(.8) drop-shadow(0 0 14px #ff2a2a);}
 .cine-char.form-awaken{filter:saturate(2) hue-rotate(-20deg) brightness(1.15) drop-shadow(0 0 16px #ffd23b);}
 .cine-char.form-gold{filter:sepia(1) saturate(3) hue-rotate(-15deg) brightness(1.1) drop-shadow(0 0 16px #ffd23b);}
 .cine-char.form-neg{filter:invert(1) hue-rotate(180deg);}

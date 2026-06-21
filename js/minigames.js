@@ -78,32 +78,20 @@
       const afford = window.GAME.money >= tier.cost;
       const b = el('button', 'mg-game-btn', `<b>${tier.label}</b><small>成功率 約${Math.round(tier.rate * 100)}%</small>`);
       if (!afford) { b.disabled = true; b.style.opacity = .5; }
-      b.addEventListener('click', () => { if (window.GAME.spendMoney(tier.cost)) darkRun(job, tier.rate); });
+      b.addEventListener('click', () => { if (window.GAME.spendMoney(tier.cost)) darkExecute(job, tier.rate); });
       list.appendChild(b);
     });
     body.appendChild(list);
     const back = el('button', 'mg-btn', '◀ 戻る'); back.addEventListener('click', darkMenu); body.appendChild(back);
   }
-  function darkRun(job, rate) {
+  // スキル無し：表示成功率でそのまま抽選（ドキドキの待ち時間→結果）
+  function darkExecute(job, rate) {
     clearTimers(); titleEl.textContent = job.t + ' 決行中…';
     body.innerHTML = '';
-    body.appendChild(el('div', 'mg-info', '🚨 警戒メーターを緑で止めろ！'));
-    const bar = el('div', 'mg-bar'); const zone = el('div', 'mg-zone'); const cur = el('div', 'mg-cursor');
-    zone.style.left = '40%'; zone.style.width = '20%'; zone.style.background = 'rgba(57,211,83,.5)';
-    bar.append(zone, cur);
-    const danger = el('div', 'mg-zone'); danger.style.left = '0'; danger.style.width = '18%'; danger.style.background = 'rgba(255,59,59,.45)'; bar.appendChild(danger);
-    const danger2 = el('div', 'mg-zone'); danger2.style.left = '82%'; danger2.style.width = '18%'; danger2.style.background = 'rgba(255,59,59,.45)'; bar.appendChild(danger2);
-    const btn = el('button', 'mg-btn wide', '🤫 実行（止める）');
-    body.append(bar, btn);
-    let pos = 0, dir = 1; const iv = setInterval(() => { pos += dir * 3.4; if (pos >= 100) { pos = 100; dir = -1; } else if (pos <= 0) { pos = 0; dir = 1; } cur.style.left = pos + '%'; }, 16); timers.push(iv);
-    btn.addEventListener('click', () => {
-      if (btn.disabled) return; btn.disabled = true; clearInterval(iv);
-      let bonus = 0;
-      if (pos >= 40 && pos <= 60) bonus = 0.10; else if (pos < 18 || pos > 82) bonus = -0.15;
-      const finalRate = Math.max(0.05, Math.min(0.97, rate + bonus));
-      const success = Math.random() < finalRate;
-      darkResult(job, success);
-    });
+    body.appendChild(el('div', 'mg-info', `成功率 ${Math.round(rate * 100)}% で抽選中…`));
+    body.appendChild(el('div', 'mg-warn', '🕶 結果やいかに——'));
+    if (A()) A().SE.swarm();
+    after(1300, () => { const success = Math.random() < rate; darkResult(job, success); });
   }
   function darkResult(job, success) {
     clearTimers(); body.innerHTML = '';

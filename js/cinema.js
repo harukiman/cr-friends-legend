@@ -63,7 +63,7 @@
     // 背景（写真 or アニメクラス or グラデ）
     if (s.bgImg) {
       bg.className = 'cine-bg bg-photo';
-      bg.style.background = `linear-gradient(rgba(5,2,15,.45),rgba(5,2,15,.6)), url('${window.ASSETS.url(s.bgImg)}') center/cover no-repeat`;
+      bg.style.background = `linear-gradient(rgba(5,2,15,.28),rgba(5,2,15,.42)), url('${window.ASSETS.url(s.bgImg)}') center/cover no-repeat`;
     } else if (s.bgClass) {
       bg.className = 'cine-bg ' + s.bgClass; bg.style.background = '';
     } else {

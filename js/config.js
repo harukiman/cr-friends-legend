@@ -38,18 +38,18 @@ const KAKUHEN_SYMBOLS = ['doya', 'legend', 'black'];
 // ※実機よりも大幅に甘め（当たりやすい）設定。
 const SPECS = {
   amadeji: {
-    name: '激甘デジ', normalOdds: 50, kakuhenOdds: 10,
-    kakuhenRate: 0.70, stCount: 100, rounds: 5, payoutPerRound: 80,
+    name: '激甘デジ', normalOdds: 50, kakuhenOdds: 25,
+    kakuhenRate: 0.55, stCount: 50, rounds: 5, payoutPerRound: 80,
     reachRate: 0.30,
   },
   light: {
-    name: 'ライト', normalOdds: 99, kakuhenOdds: 18,
-    kakuhenRate: 0.75, stCount: 120, rounds: 8, payoutPerRound: 100,
+    name: 'ライト', normalOdds: 99, kakuhenOdds: 40,
+    kakuhenRate: 0.65, stCount: 90, rounds: 8, payoutPerRound: 100,
     reachRate: 0.26,
   },
   middle: {
-    name: 'ミドル', normalOdds: 199, kakuhenOdds: 30,
-    kakuhenRate: 0.85, stCount: 150, rounds: 10, payoutPerRound: 160,
+    name: 'ミドル', normalOdds: 199, kakuhenOdds: 50,
+    kakuhenRate: 0.70, stCount: 110, rounds: 10, payoutPerRound: 160,
     reachRate: 0.22,
   },
 };

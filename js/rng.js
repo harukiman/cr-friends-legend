@@ -30,15 +30,15 @@
     };
   }
 
-  // 当落抽選。kakuhen=true なら高確分母を使う。
-  function drawHit(spec, kakuhen) {
-    const odds = kakuhen ? spec.kakuhenOdds : spec.normalOdds;
+  // 当落抽選。kakuhen=true なら高確分母を使う。mult=設定補正(小さいほど甘い)。
+  function drawHit(spec, kakuhen, mult = 1) {
+    const odds = (kakuhen ? spec.kakuhenOdds : spec.normalOdds) * mult;
     return _rand() < (1 / odds);
   }
 
-  // 確変突入判定
-  function drawKakuhen(spec) {
-    return _rand() < spec.kakuhenRate;
+  // 確変突入判定。bonus=設定補正。
+  function drawKakuhen(spec, bonus = 0) {
+    return _rand() < Math.max(0, Math.min(1, spec.kakuhenRate + bonus));
   }
 
   // 確率配列から1件抽選（probs は合計1想定、誤差は末尾吸収）

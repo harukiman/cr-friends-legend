@@ -18,6 +18,10 @@
     { amt: 1e9,  key: 'oku10', level: 10 },
   ];
   const SPEEDS = [1, 2, 3, 5, 10, 50, 100];   // 倍速
+  // 設定1〜6（実機準拠。高設定ほど甘い）。大当り確率の倍率と確変突入の補正。
+  const SETTING_ODDS_MULT = [1.08, 1.00, 0.95, 0.90, 0.86, 0.82];
+  const SETTING_KAKU_BONUS = [-0.04, 0.00, 0.02, 0.04, 0.06, 0.08];
+  const SETTING_INTERVAL_MS = 10 * 60 * 1000;  // 現実時間10分ごとに設定変更
 
   // 実績（早期実績は報酬で序盤の資金繰りを滑らかに）
   const ACHIEVEMENTS = [
@@ -49,6 +53,7 @@
     firing: false,
     auto: false,
     speed: 1,           // 倍速(×1..×100)
+    setting: 2,         // 設定1〜6（非表示・看破要素）
     uchikata: 'left',   // 打ち分け（left/right）。電サポ中は right が正解
     // 経済
     money: INITIAL_MONEY,   // 軍資金（円）
@@ -58,6 +63,7 @@
     milestonesHit: {},      // FIRE到達フラグ
     achievements: {},       // 解除済み実績
     baitEarned: false,      // バイト経験フラグ
+    storyChapter: 0,        // 見たストーリー章数（初当りごとに進行）
     // 実機データカウンター用
     bigHits: 0,         // 大当り回数
     kakuhenCount: 0,    // 確変回数
@@ -74,8 +80,9 @@
   function save() {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
-        money: S.money, rate: S.rate, maxRate: S.maxRate, specKey: S.specKey, balls: S.balls, speed: S.speed,
+        money: S.money, rate: S.rate, maxRate: S.maxRate, specKey: S.specKey, balls: S.balls, speed: S.speed, setting: S.setting,
         peakAssets: S.peakAssets, milestonesHit: S.milestonesHit, achievements: S.achievements, baitEarned: S.baitEarned,
+        storyChapter: S.storyChapter,
         bigHits: S.bigHits, kakuhenCount: S.kakuhenCount, maxRenchan: S.maxRenchan, spins: S.spins,
       }));
     } catch (_) {}
@@ -83,7 +90,7 @@
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
-      if (!d) return;
+      if (!d) return false;
       const num = v => typeof v === 'number' && isFinite(v) && v >= 0;
       if (C.SPECS[d.specKey]) { S.specKey = d.specKey; S.spec = C.SPECS[d.specKey]; }
       if (num(d.money)) S.money = d.money;
@@ -95,16 +102,19 @@
       if (d.milestonesHit && typeof d.milestonesHit === 'object') S.milestonesHit = d.milestonesHit;
       if (d.achievements && typeof d.achievements === 'object') S.achievements = d.achievements;
       S.baitEarned = !!d.baitEarned;
+      if (num(d.storyChapter)) S.storyChapter = d.storyChapter;
+      if (d.setting >= 1 && d.setting <= 6) S.setting = d.setting;
       S.maxRate = Math.max(S.maxRate, S.rate);
       window.SPEED = S.speed;
       ['bigHits', 'kakuhenCount', 'maxRenchan', 'spins'].forEach(k => { if (num(d[k])) S[k] = d[k]; });
       S.startBalls = S.balls;
-    } catch (_) {}
+      return true;
+    } catch (_) { return false; }
   }
   function resetSave() {
     try { localStorage.removeItem(SAVE_KEY); } catch (_) {}
     S.money = INITIAL_MONEY; S.rate = 1; S.maxRate = 1; S.balls = 0; S.peakAssets = INITIAL_MONEY;
-    S.milestonesHit = {}; S.achievements = {}; S.baitEarned = false; S.speed = 1; window.SPEED = 1;
+    S.milestonesHit = {}; S.achievements = {}; S.baitEarned = false; S.storyChapter = 0; S.speed = 1; window.SPEED = 1;
     S.bigHits = S.kakuhenCount = S.maxRenchan = S.spins = 0;
     S.kakuhen = S.jitan = false; S.stRemaining = 0; S.renchan = 0; S.holds = [];
     S.startBalls = 0; S.history = [];
@@ -117,9 +127,12 @@
 
   function init(opts) {
     onChange = opts.onChange || (() => {});
-    load();
+    const had = load();
+    if (!had) rerollSetting(false);   // 初回はランダム設定
     setupLane();
     requestAnimationFrame(laneLoop);
+    // 現実時間10分ごとに設定変更（実機のホール変更を模す）
+    setInterval(() => rerollSetting(true), SETTING_INTERVAL_MS);
     refresh();
   }
   function refresh() { onChange(snapshot()); }
@@ -136,6 +149,7 @@
       profit: A - INITIAL_MONEY, peakAssets: S.peakAssets,
       goalPct: Math.min(100, A / 1e8 * 100), rates: RATES, speeds: SPEEDS, speed: S.speed,
       uchikata: S.uchikata, needRight: needRight(),
+      storyChapter: S.storyChapter, chapterCount: (window.STORY ? window.STORY.chapterCount() : 9),
     };
   }
 
@@ -144,8 +158,15 @@
     if (S.history.length > 400) S.history.shift();
   }
 
+  function settingMult() { return SETTING_ODDS_MULT[S.setting - 1] || 1; }
+  function settingKakuBonus() { return SETTING_KAKU_BONUS[S.setting - 1] || 0; }
   function currentPHit() {
-    return 1 / (S.kakuhen ? S.spec.kakuhenOdds : S.spec.normalOdds);
+    return 1 / ((S.kakuhen ? S.spec.kakuhenOdds : S.spec.normalOdds) * settingMult());
+  }
+  function rerollSetting(notify) {
+    S.setting = 1 + Math.floor(Math.random() * 6);
+    save();
+    if (notify && window.UI && window.UI.toast) window.UI.toast('設定が変更されました（看破せよ）', 0);
   }
   function needRight() { return S.kakuhen || S.jitan; }   // 電サポ中は右打ち
   function startChance() {
@@ -158,12 +179,24 @@
     if (d !== 'left' && d !== 'right') return;
     S.uchikata = d; refresh();
   }
+  // 台リセット：持玉を換金して台の状態/データをクリア（軍資金・実績・物語は維持）。新台＝新設定。
+  function resetMachine() {
+    if (S.busy) return;
+    if (S.balls > 0) { S.money += S.balls * S.rate; S.balls = 0; }
+    S.kakuhen = S.jitan = false; S.stRemaining = 0; S.renchan = 0; S.holds = [];
+    S.spins = 0; S.bigHits = 0; S.kakuhenCount = 0; S.maxRenchan = 0; S.sinceHit = 0;
+    S.startBalls = 0; S.history = []; S.uchikata = 'left';
+    rerollSetting(false);
+    if (window.AUDIO) window.AUDIO.setBaseBgm('normal');
+    updatePeak(); save(); refresh();
+    if (window.PRODUCTION) window.PRODUCTION.msg('新しい台に移動しました（データリセット）');
+  }
 
   // 1回転ぶんの抽選を生成（保留作成時に確定）
   function rollSpin() {
     const pHit = currentPHit();
-    const hit = window.RNG.drawHit(S.spec, S.kakuhen);
-    const willKakuhen = hit ? window.RNG.drawKakuhen(S.spec) : false;
+    const hit = window.RNG.drawHit(S.spec, S.kakuhen, settingMult());
+    const willKakuhen = hit ? window.RNG.drawKakuhen(S.spec, settingKakuBonus()) : false;
     const prod = window.RNG.pickProduction(hit, pHit);
     const finalSyms = window.RNG.pickStopSymbols(prod, willKakuhen);
     return { hit, prod, finalSyms, willKakuhen, holdDef: prod.hold };
@@ -257,6 +290,11 @@
     S.holds = []; // 大当りで保留クリア（止め打ち）
     refresh();
     const spec = S.spec;
+    // 壮大なストーリー：初当りごとに1章進行（連チャン中は割り込まない）
+    if (S.renchan === 1 && S.storyChapter < window.STORY.chapterCount() && storyOn()) {
+      await window.CINEMA.play(window.STORY.chapter(S.storyChapter), { bgm: 'super', skippable: true });
+    }
+    if (S.renchan === 1 && S.storyChapter < window.STORY.chapterCount()) { S.storyChapter++; save(); refresh(); }
     if (window.AUDIO) { window.AUDIO.setBaseBgm(null); window.AUDIO.startBgm('round'); }
     // 昇格演出（7R以上のスペックで稀に低Rスタート→昇格）
     if (spec.rounds >= 7 && Math.random() < 0.45) {
@@ -444,7 +482,7 @@
   }
 
   window.GAME = { init, fireStart, fireStop, setAuto, setSpec, addBalls, forcePlay,
-                  lendBalls, cashOut, setRate, setSpeed, addMoney, resetSave, save, setUchikata,
+                  lendBalls, cashOut, setRate, setSpeed, addMoney, resetSave, resetMachine, save, setUchikata,
                   getAchievements, spendMoney, payBail, get money() { return S.money; },
                   snapshot, get isBusy() { return S.busy; }, get isAuto() { return S.auto; } };
 })();

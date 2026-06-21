@@ -142,11 +142,17 @@
       <div class="row">
         <button id="toggle-story" class="toggle-btn active">🎬 ムービー ON</button>
         <button id="toggle-fastprod" class="toggle-btn">⏩ 演出も倍速 OFF</button>
+      </div>
+      <div class="row">
+        <button id="story-book" class="toggle-btn">📖 物語</button>
         <button id="achievements" class="toggle-btn">🏆 実績</button>
       </div>
       <div class="row">
+        <button id="reset-machine" class="toggle-btn">🔄 台移動(リセット)</button>
         <button id="replay-op" class="toggle-btn">OP再生</button>
         <button id="replay-tut" class="toggle-btn">遊び方</button>
+      </div>
+      <div class="row">
         <button id="data-delete" class="toggle-btn danger">🗑 データ削除</button>
       </div>
       <div id="reliability" class="info"></div>
@@ -167,6 +173,14 @@
     <div class="mg-panel">
       <div class="mg-header"><span class="mg-title">🏆 実績</span><button id="ach-close" class="mg-close">✕</button></div>
       <div id="ach-body" class="mg-body"></div>
+    </div>
+  </div>
+
+  <!-- 物語ビューア -->
+  <div id="story-modal" class="modal hidden">
+    <div class="mg-panel">
+      <div class="mg-header"><span class="mg-title">📖 フレンズ伝説 物語</span><button id="story-close" class="mg-close">✕</button></div>
+      <div id="story-body" class="mg-body"></div>
     </div>
   </div>
 

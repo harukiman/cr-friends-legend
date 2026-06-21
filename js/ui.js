@@ -27,7 +27,7 @@
     $('#bk-value').textContent = yen(st.ballValue);
     const p = $('#bk-profit'); p.textContent = (st.profit >= 0 ? '+' : '') + yen(st.profit); p.style.color = st.profit >= 0 ? '#39d353' : '#ff6b6b';
     $('#fg-pct').textContent = st.goalPct.toFixed(st.goalPct < 10 ? 2 : 1) + '%';
-    $('#fg-detail').textContent = `(資産 ¥${oku(st.assets)} / 1億)`;
+    $('#fg-detail').textContent = `(資産 ¥${oku(st.assets)} / 1億　📖${Math.min(st.storyChapter + 1, st.chapterCount)}/${st.chapterCount}章)`;
     $('#fg-fill').style.width = Math.min(100, st.goalPct) + '%';
 
     // データカウンター
@@ -186,6 +186,22 @@
     m.classList.remove('hidden');
   }
 
+  // ===== 物語ビューア（解放済みの章を再生できる） =====
+  function openStory() {
+    const st = window.GAME.snapshot(), m = $('#story-modal'), body = $('#story-body');
+    body.innerHTML = '';
+    body.appendChild(el2('p', 'mg-intro', `初当りごとに物語が進みます（${Math.min(st.storyChapter, st.chapterCount)}/${st.chapterCount}章 解放）。`));
+    for (let i = 0; i < st.chapterCount; i++) {
+      const unlocked = i < st.storyChapter;
+      const b = el2('button', 'mg-game-btn' + (unlocked ? '' : ''), `<b>${unlocked ? '📖' : '🔒'} ${window.STORY.chapterTitle(i)}</b><small>${unlocked ? 'タップで再生' : '初当りで解放'}</small>`);
+      if (!unlocked) { b.disabled = true; b.style.opacity = .5; }
+      else b.addEventListener('click', async () => { m.classList.add('hidden'); window.AUDIO.resume(); if (!window.CINEMA.isPlaying) await window.CINEMA.play(window.STORY.chapter(i), { bgm: 'super', skippable: true }); });
+      body.appendChild(b);
+    }
+    m.classList.remove('hidden');
+  }
+  function el2(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+
   // ===== チュートリアル =====
   function showTutorial() {
     const m = $('#tutorial'), body = $('#tut-body');
@@ -224,12 +240,14 @@
     const auto = $('#auto');
     auto.addEventListener('click', async () => {
       window.AUDIO.resume(); ensureBaseBgm();
-      if (window.CINEMA && window.CINEMA.isPlaying) return;
-      if (await maybeOpening()) return;
-      const on = !auto.classList.contains('active');
-      auto.classList.toggle('active', on);
-      auto.textContent = on ? 'オート ON' : 'オート OFF';
-      window.GAME.setAuto(on);
+      const turningOn = !auto.classList.contains('active');
+      if (turningOn) {                                  // ONにする時だけ演出/OPを尊重
+        if (window.CINEMA && window.CINEMA.isPlaying) return;
+        if (await maybeOpening()) return;
+      }
+      auto.classList.toggle('active', turningOn);
+      auto.textContent = turningOn ? 'オート ON' : 'オート OFF';
+      window.GAME.setAuto(turningOn);                   // OFFは常に即時反映
     });
 
     // 打ち分け
@@ -278,6 +296,15 @@
     $('#achievements').addEventListener('click', openAch);
     $('#ach-close').addEventListener('click', () => $('#ach-modal').classList.add('hidden'));
     $('#tut-close').addEventListener('click', () => $('#tutorial').classList.add('hidden'));
+    // 物語ビューア
+    $('#story-book').addEventListener('click', openStory);
+    $('#story-close').addEventListener('click', () => $('#story-modal').classList.add('hidden'));
+
+    // 台移動（台リセット）：軍資金等は維持、台の状態とデータをリセット
+    $('#reset-machine').addEventListener('click', () => {
+      if (window.GAME.isBusy) { window.PRODUCTION.msg('演出中はリセットできません'); return; }
+      if (confirm('別の台に移動しますか？\n持玉は換金され、確変/連チャン/データはリセットされます。\n（軍資金・実績・物語は維持）')) window.GAME.resetMachine();
+    });
 
     // データ削除（確認必須。それ以外で進捗はリセットされない）
     $('#data-delete').addEventListener('click', () => {
