@@ -20,8 +20,10 @@
     else if (st.state === 'jitan') { badge.textContent = `時短 残${st.stRemaining}`; badge.classList.add('jitan'); }
     else badge.textContent = '通常';
 
-    // 軍資金バー
-    $('#bk-money').textContent = yen(st.money);
+    // 軍資金バー（増加時にポップ）
+    const me = $('#bk-money'); const newM = yen(st.money);
+    if (me._val != null && st.money > me._val) { me.classList.remove('bk-pop'); void me.offsetWidth; me.classList.add('bk-pop'); }
+    me._val = st.money; me.textContent = newM;
     $('#bk-value').textContent = yen(st.ballValue);
     const p = $('#bk-profit'); p.textContent = (st.profit >= 0 ? '+' : '') + yen(st.profit); p.style.color = st.profit >= 0 ? '#39d353' : '#ff6b6b';
     $('#fg-pct').textContent = st.goalPct.toFixed(st.goalPct < 10 ? 2 : 1) + '%';

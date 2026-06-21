@@ -109,14 +109,32 @@
   function songOf(k) { return SONGS[k] || SONGS.normal; }
   function playStep(song, i, t) {
     const li = i % song.loop;
-    const ln = song.lead[li]; if (ln) voice(mid(ln), t, 60 / song.bpm / 4 * 1.6, { types: ['sawtooth', 'square'], detune: 8, gain: 0.16, filter: 3200, filterTo: 1600, a: 0.004, d: 0.06, s: 0.6, r: 0.14, dest: bgmBus });
-    const bn = song.bass[li]; if (bn) voice(mid(bn), t, 60 / song.bpm / 4 * 1.1, { types: ['triangle'], gain: 0.22, a: 0.004, d: 0.04, s: 0.8, r: 0.06, dest: bgmBus });
-    if (song.chord && song.chord[li]) song.chord[li].forEach(c => voice(mid(c), t, 60 / song.bpm / 4 * 7, { types: ['triangle'], gain: 0.05, a: 0.02, d: 0.1, s: 0.7, r: 0.3, dest: bgmBus }));
+    const loopNum = Math.floor(i / song.loop);
+    const sectionB = (loopNum % 2) === 1;        // A/Bで雰囲気を変えて反復感を軽減
+    const sd = 60 / song.bpm / 4;
+    const ln = song.lead[li];
+    if (ln) {
+      voice(mid(ln), t, sd * 1.6, { types: ['sawtooth', 'square'], detune: 8, gain: 0.16, filter: 3200, filterTo: 1600, a: 0.004, d: 0.06, s: 0.6, r: 0.14, dest: bgmBus });
+      // ハモ리（長三度/五度）でメロを厚く
+      const h = (li % 4 === 0) ? 7 : 4;
+      voice(mid(ln + h), t, sd * 1.2, { types: ['square'], gain: 0.06, a: 0.004, d: 0.05, s: 0.5, r: 0.12, dest: bgmBus });
+      // セクションBはオクターブ上のきらめきを足す
+      if (sectionB && li % 2 === 0) voice(mid(ln + 12), t, sd * 0.8, { types: ['triangle'], gain: 0.05, a: 0.004, r: 0.1, dest: bgmBus });
+    }
+    const bn = song.bass[li];
+    if (bn) {
+      voice(mid(bn), t, sd * 1.1, { types: ['triangle'], gain: 0.22, a: 0.004, d: 0.04, s: 0.8, r: 0.06, dest: bgmBus });
+      voice(mid(bn), t, sd * 0.5, { types: ['sawtooth'], gain: 0.05, filter: 400, a: 0.003, r: 0.04, dest: bgmBus }); // 軽い倍音
+    }
+    if (song.chord && song.chord[li]) song.chord[li].forEach(c => voice(mid(c), t, sd * 7, { types: ['triangle'], gain: 0.05, a: 0.02, d: 0.1, s: 0.7, r: 0.3, dest: bgmBus }));
     // ドラム
     const b = li % 8, pat = song.drum;
+    const fill = li >= song.loop - 2;             // ループ末尾でスネアフィル
     if (pat === 'rock') { if (b === 0 || b === 4) kick(t); if (b === 2 || b === 6) snare(t); if (b % 2 === 1) hat(t, 0.08); }
-    else if (pat === 'drive') { if (b % 2 === 0) kick(t, 0.45); if (b === 4) snare(t); hat(t, 0.06); }
+    else if (pat === 'drive') { if (b % 2 === 0) kick(t, 0.45); if (b === 4) snare(t); hat(t, b % 2 ? 0.08 : 0.05); }
     else if (pat === 'tense') { if (b === 0) kick(t, 0.5); hat(t, 0.05); if (b === 7) snare(t, 0.2); }
+    if (fill) snare(t, 0.22);
+    if (fill) snare(t + sd * 0.5, 0.18);
   }
   function scheduler() {
     if (!ctx) return;

@@ -527,3 +527,7 @@ body{font-family:"M PLUS Rounded 1c","Hiragino Kaku Gothic ProN","Yu Gothic",sys
 #panel,#bankroll,#data-counter{box-shadow:0 4px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04);}
 .mg-panel{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 20px 60px rgba(0,0,0,.7),0 0 50px rgba(58,240,255,.18);}
 select{font-family:inherit;font-weight:700;}
+
+/* 軍資金増加ポップ */
+@keyframes bkPop{0%{transform:scale(1);}40%{transform:scale(1.18);filter:brightness(1.5);}100%{transform:scale(1);}}
+#bk-money.bk-pop{animation:bkPop .4s ease-out;display:inline-block;}
